@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.DS_Store
+codeStudio-1249
 
 # C extensions
 *.so
