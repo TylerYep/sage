@@ -41,20 +41,20 @@ def makeLifeEasier():
 	data = pickle.load(open('data/p1/' + fileName + '.pickle', 'rb')) # countMap
 	studentCount = 0
 	start = 0
-	end = 100
-	file1 = open("p1_first_100.txt","a")
+	end = float("inf")
+	file1 = open("p1_all_attempts.txt","a")
 	for key in data:
 		attempts = []
 		for d in data[key]:
 			attempts.append(studentCodes[d[0]])
-		studentAttempts[studentCount] = attempts
+		studentAttempts[key] = attempts
 		if studentCount >= start and studentCount <= end:
-			file1.write('\n\n\n\nstudent' + str(studentCount))
-			for a in attempts:
-				file1.write('\n' + a)
+			file1.write('\n\n\n\nstudent ' + str(studentCount))
+			for i in range(len(attempts)):
+				file1.write('\n' + 'attempt ' + str(i) + ' with program ' + str(data[key][i][0]) + '\n' + attempts[i])
 			file1.write('\n\n\n\n')
 		studentCount += 1
-
+	file1.close()
 	# with open('p1_student_attempts_large.csv', 'w', newline='') as csvfile:
 	# 	wr = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
 	# 	for key in studentAttempts:
