@@ -1,3 +1,4 @@
+import sys
 import json
 from models import Tree
 
@@ -6,8 +7,9 @@ class TreeEncoder(json.JSONEncoder):
         ''' Overrides encoding method. '''
         if isinstance(o, Tree):
             return {'type': 'Tree',
-					'data': {'rootName': o.rootName, 'children': o.children}
-					}
+					'rootName': o.rootName,
+                    'children': o.children
+				   }
         return json.JSONEncoder.default(self, o)
 
 

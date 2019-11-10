@@ -36,4 +36,3 @@ def convert_to_json():
 
 if __name__ == '__main__':
 	convert_to_json()
-	# json.load(f, cls=TreeDecoder)

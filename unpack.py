@@ -1,9 +1,10 @@
 import os
 import sys
-import pickle
+import json
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
+from tree_encoder import TreeDecoder
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -11,26 +12,26 @@ files = ['activities-4', 'countMap-4', 'levelIdMap-4', 'sources-4', 'sourcesSmal
 
 
 def main():
-	fileName = 'sources-9'
+	fileName = 'sources-2'
 	# attempts = []
 	with open(fileName + '.csv', 'w', newline='') as csvfile:
 
 		wr = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
 
 		studentCodes = {}
-		data = pickle.load(open('p9/' + fileName + '.pickle', 'rb')) # countMap
-		# print(type(data))
-		for key in data:
-			studentCodes[key] = str(data[key])
-			# attempts.append(len(data[key]))
-			wr.writerow([key, data[key]])
+		with open('data/p2/' + fileName + '.json', 'r') as f:
+			data = json.load(f, cls=TreeDecoder) # countMap
+			# print(type(data))
+			for key in data:
+				studentCodes[key] = str(data[key])
+				# attempts.append(len(data[key]))
+				wr.writerow([key, data[key]])
 	# plt.hist(attempts, normed=True, bins=30)
 	# plt.savefig(fileName + '.png')
 		# print(studentCodes)
 
 def makeLifeEasier():
 	fileName = 'sources-1'
-	# attempts = []
 	studentCodes = {}
 	data = pickle.load(open('data/p1/' + fileName + '.pickle', 'rb')) # countMap
 	for key in data:
@@ -39,6 +40,7 @@ def makeLifeEasier():
 	fileName = 'activities-1'
 	studentAttempts = {}
 	data = pickle.load(open('data/p1/' + fileName + '.pickle', 'rb')) # countMap
+
 	studentCount = 0
 	start = 0
 	end = float("inf")
@@ -47,14 +49,12 @@ def makeLifeEasier():
 		attempts = []
 		for d in data[key]:
 			attempts.append(studentCodes[d[0]])
+
 		studentAttempts[key] = attempts
 		if studentCount >= start and studentCount <= end:
-			file1.write('\n\n\n\nstudent ' + str(studentCount))
 			for i in range(len(attempts)):
 				file1.write('\n' + 'attempt ' + str(i) + ' with program ' + str(data[key][i][0]) + '\n' + attempts[i])
 			file1.write('\n\n\n\n')
-		studentCount += 1
-	file1.close()
 	# with open('p1_student_attempts_large.csv', 'w', newline='') as csvfile:
 	# 	wr = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
 	# 	for key in studentAttempts:
@@ -91,7 +91,7 @@ def main3():
 	print('number of simulations:', bigSum)
 
 if __name__ == '__main__':
-	# main()
+	main()
 	# main2()
 	# main3()
-	makeLifeEasier()
+	# makeLifeEasier()
