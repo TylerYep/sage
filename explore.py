@@ -19,7 +19,7 @@ ALL_KEYS = ("", SUBMISSION_LEFT, SUBMISSION_RIGHT, SPACE, CTRLC, ENTER, UNENTER,
 
 def getch():
     import termios
-    import sys, tty
+    import tty
     def _getch():
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
@@ -51,6 +51,9 @@ def run_gui(problem=1):
     with open(f'data/p{problem}/sources-{problem}.json') as source_file:
         source_data = json.load(source_file, cls=TreeDecoder)
 
+    with open(f'data/p{problem}/countMap-{problem}.json') as count_file:
+        count_data = json.load(count_file, cls=TreeDecoder)
+
     students = {}
     with open(f'data/p{problem}/activities-{problem}.json') as activity_file:
         activity_data = json.load(activity_file, cls=TreeDecoder)
@@ -60,10 +63,11 @@ def run_gui(problem=1):
                 student_submissions.append(source_data[str(program_id)])
             students[student_id] = student_submissions
 
+
+
     student_id = input("Type in a student id (or Enter for random student): ")
     ids = list(activity_data.keys())
     if len(student_id) != 32 or student_id not in ids:
-        print("Choosing random...")
         student_id = random.choice(ids)
 
     action = None
@@ -73,10 +77,14 @@ def run_gui(problem=1):
     while action != SPACE:
         clear()
         num_submissions = len(students[student_id])
-
+        problem = students[student_id][curr_index]
+        program_id, timestamp = activity_data[student_id][curr_index]
         print("Student id:", student_id)
         print("Submission:", curr_index+1, "out of", num_submissions)
-        print(students[student_id][curr_index])
+        print("Timestamp:", timestamp)
+        print("Program Rank:", program_id, f"(similar programs:{count_data[str(program_id)]})")
+
+        print(problem)
         LENGTH = 100
         print("|", end='')
         for i in range(num_submissions):
@@ -131,6 +139,8 @@ if __name__ == '__main__':
     # d0cd3baccf1c7185d6674f4b2d041441
     # e1f895be584bde8e24b5965aeb9f9a85
     # fd4b849ec5f1202428194a6dfb81875d
+    # f21c0f983d5690b97d8417f0a60fa3ff
+    # 34af15319de837c25bea29fd5b1914fe
 
     # Problem 2 interesting:
     # e01d8b54fd8b2559a69f974cc0a85ff7
