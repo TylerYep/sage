@@ -2,6 +2,18 @@
 CS 398 Final Project
 By Tyler Yep, Jesse Doan
 
+# Instructions
+Obtain the Code Studio data from Chris Piech (cpiech) and put it in `data/`.
+
+## Data Exploration
+Run `python data_loader.py` to convert the data to json.
+
+Then, run `python explore.py` to examine specific data examples.
+
+# TODO
+1. Visualizing this data somehow (cluster neighbors).
+2. Order by number of submissions.
+
 # Motivating Question
 How can we measure a student’s growth in Hour of Code? Can we find the moments when the student has learned, or in other words, advanced to a greater ability?
 
