@@ -1,20 +1,14 @@
-from .tokenStack import TokenStack
 from .tree import Tree
-def parse(code):
-    tokenStack = tokenizePseudocode(code)
-    root = Tree('Program')
-    root.addChild(Tree('WhenRun'))
-    while not tokenStack.isEmpty():
-        root.addChild(getBlock(tokenStack))
-    return root
 
-def tokenizePseudocode(code):
+def parse(code):
     tokens = []
     curr = ''
     for i, ch in enumerate(code):
-        if str.isalnum(ch) or ch in ['.', '?'] or (ch in ['+', '-'] and 
-                                              code[i-1] != 'i' and
-                                              code[i+1] != 'i'):
+        if str.isalnum(ch) \
+            or ch in ['.'] \
+            or (ch in ['+', '-'] \
+                and code[i-1] != 'i' \
+                and code[i+1] != 'i'):
             curr += ch
         else:
             if curr != '':
@@ -22,10 +16,21 @@ def tokenizePseudocode(code):
                 curr = ''
             if not str.isspace(ch):
                 tokens.append(ch)
-    
+
     return TokenStack(tokens)
 
-def removeComments(code):
+
+def convert(code: str) -> Tree:
+    codeNoComments = removeComments(code)
+    tokenStack = parse(codeNoComments)
+    root = Tree('Program')
+    root.addChild(Tree('WhenRun'))
+    while not tokenStack.isEmpty():
+        root.addChild(getBlock(tokenStack))
+    return root
+
+
+def removeComments(code: str) -> str:
     newCode = ''
     for line in code.split('\n'):
         if len(line) > 0 and line[0] != '#':
@@ -33,7 +38,7 @@ def removeComments(code):
     return newCode
 
 
-def getBlock(tokenStack):
+def getBlock(tokenStack: TokenStack) -> Tree:
     nextToken = tokenStack.peek()
     if nextToken == 'Repeat':
         return getRepeat(tokenStack)
@@ -62,7 +67,7 @@ def getExpression(tokenStack):
 
     # If you don't find a binary opp next,
     # you are done
-    if not isBinaryOpperator(tokenStack.peek()): 
+    if not isBinaryOpperator(tokenStack.peek()):
         return lhs
     opp = tokenStack.next()
     oppName = getOppName(opp)
@@ -88,9 +93,7 @@ def getValue(tokenStack):
     singleton = tokenStack.next()
     if isNumber(singleton):
         return makeNumberValue(singleton)
-    if singleton == '???':
-        return makeNumberValue(singleton)
-    elif singleton == 'Counter':
+    elif singleton == 'i' or singleton == 'x':
         tree = Tree('Value')
         var = tree.addChild(Tree('Variable'))
         var.addChild(Tree('Counter'))
@@ -117,20 +120,20 @@ def getRepeat(tokenStack):
 def getFor(tokenStack):
     tokenStack.checkNext('For')
     tokenStack.checkNext('(')
-    start = getExpression(tokenStack)
+    start = str(getExpression(tokenStack))
     tokenStack.checkNext(',')
-    end = getExpression(tokenStack)
+    end = str(getExpression(tokenStack))
     tokenStack.checkNext(',')
-    delta = getExpression(tokenStack)
+    delta = str(getExpression(tokenStack))
     tokenStack.checkNext(')')
     tokenStack.checkNext('{')
     body = getBody(tokenStack)
     tokenStack.checkNext('}')
 
     forTree = Tree('For')
-    forTree.addChild(start)
-    forTree.addChild(end)
-    forTree.addChild(delta)
+    forTree.addChild(makeNumberValue(start))
+    forTree.addChild(makeNumberValue(end))
+    forTree.addChild(makeNumberValue(delta))
     forTree.addChild(body)
     return forTree
 
@@ -151,8 +154,6 @@ def getBody(tokenStack):
 
 
 def parseCommandName(s):
-    if s == 'Move':
-        return 'Move', 'Forward'
     if s == 'MoveForward':
         return 'Move', 'Forward'
     if s == 'MoveBackwards':
@@ -170,7 +171,7 @@ def isBinaryOpperator(s):
 
 
 def isCommand(s):
-    cmds = ['Move','MoveForward', 'TurnRight', 'TurnLeft', 'MoveBackwards']
+    cmds = ['MoveForward', 'TurnRight', 'TurnLeft', 'MoveBackwards']
     return s in cmds
 
 

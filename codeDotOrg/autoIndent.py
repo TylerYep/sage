@@ -1,10 +1,10 @@
-def autoIndent(codeStr):
+def autoIndent(codeStr: str) -> str:
 	lines = codeStr.split('\n')
 	newCodeStr = ''
 	indentLevel = 0
 	for line in lines:
 		cleanLine = line.strip()
-		if cleanLine == '':continue
+		if cleanLine == '': continue
 		if cleanLine[0] == '}':
 			indentLevel -= 1
 		indentSpace = _makeIndentSpace(indentLevel)
@@ -14,5 +14,5 @@ def autoIndent(codeStr):
 			indentLevel += 1
 	return newCodeStr.strip()
 
-def _makeIndentSpace(level):
+def _makeIndentSpace(level: int) -> str:
 	return '  ' * level

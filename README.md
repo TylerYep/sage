@@ -14,15 +14,23 @@ Then, run `python explore.py` to examine specific data examples.
 1. Visualizing this data somehow (cluster neighbors).
 2. Order by number of submissions.
 
-# Motivating Question
+## Baseline
+
+
+
+
+
+# Project Info
+
+## Motivating Question
 How can we measure a student’s growth in Hour of Code? Can we find the moments when the student has learned, or in other words, advanced to a greater ability?
 
 Based on our predicted student ability, we can better place students in the zone of proximal development, and can then give better recommendations (feedback/next problem to try). We can also evaluate students via a different metric (grit rather than recall).
 
-# Method
+## Method
 For each problem in Code.org, we can build a rubric of mistakes the students are making. Given these rubric items, we can see whether the same students stop making these mistakes on a later problem, implying some measure of growth. If we identify this change in ability, we can make informed recommendations to increase the amount / rate of learning.
 
-# Steps
+## Steps
 1. Create rubric items for mistakes students make, and also when they don't make mistakes. This should align with intuitive notions of student growth, such as:
     * time to problem completion? (might not be true)
     * number of submissions

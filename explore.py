@@ -4,6 +4,8 @@ import json
 import random
 from tree_encoder import TreeDecoder
 
+from codeDotOrg import autoFormat
+
 clear = lambda: os.system('clear')
 
 SUBMISSION_LEFT = "["
@@ -15,9 +17,13 @@ SPACE = " "
 NEXT = "n"
 PREV = "p"
 FIND_ID = "i"
-ALL_KEYS = ("", SUBMISSION_LEFT, SUBMISSION_RIGHT, SPACE, CTRLC, ENTER, UNENTER, NEXT, PREV, FIND_ID)
+SIMPLE_MODE_TOGGLE =  "s"
+
+ALL_KEYS = ("", SUBMISSION_LEFT, SUBMISSION_RIGHT, SPACE, CTRLC, ENTER,
+            UNENTER, NEXT, PREV, FIND_ID, SIMPLE_MODE_TOGGLE)
 
 def getch():
+    ''' Gets a single character from the user. '''
     import termios
     import tty
     def _getch():
@@ -32,12 +38,14 @@ def getch():
     return _getch()
 
 def get_action():
+    ''' Prints out the prompt and then waits for the user to select an action. '''
     action = None
     prompt = (f"\nType {PREV} or {UNENTER} to see the previous student.\n"
               f"Type {NEXT} or RETURN to see the next student.\n\n")
     prompt += (f"Type {SUBMISSION_LEFT} to see the previous submission.\n"
                f"Type {SUBMISSION_RIGHT} to see the next submission.\n\n")
     prompt += f"Type {FIND_ID} to enter a specific student id.\n\n"
+    prompt += f"Type {SIMPLE_MODE_TOGGLE} to switch in/out of simple mode.\n\n"
     prompt += f"Press SPACE to exit!\n\n"
     print(prompt)
 
@@ -64,7 +72,6 @@ def run_gui(problem=1):
             students[student_id] = student_submissions
 
 
-
     student_id = input("Type in a student id (or Enter for random student): ")
     ids = list(activity_data.keys())
     if len(student_id) != 32 or student_id not in ids:
@@ -73,6 +80,7 @@ def run_gui(problem=1):
     action = None
     history = [student_id]
     curr_index, curr_student = 0, 0
+    simple_mode = True
 
     while action != SPACE:
         clear()
@@ -84,7 +92,14 @@ def run_gui(problem=1):
         print("Timestamp:", timestamp)
         print("Program Rank:", program_id, f"(similar programs:{count_data[str(program_id)]})")
 
-        print(problem)
+        print()
+        if simple_mode:
+            program_tree = autoFormat(problem)
+            print(program_tree)
+        else:
+            print(problem)
+        print()
+
         LENGTH = 100
         print("|", end='')
         for i in range(num_submissions):
@@ -130,6 +145,9 @@ def run_gui(problem=1):
             ids = list(activity_data.keys())
             if len(student_id) != 32 or student_id not in ids:
                 student_id = random.choice(ids)
+
+        elif action == SIMPLE_MODE_TOGGLE:
+            simple_mode = not simple_mode
 
 if __name__ == '__main__':
     run_gui()

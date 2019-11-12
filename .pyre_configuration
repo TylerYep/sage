@@ -1,0 +1,7 @@
+{
+  "binary": "/Users/tyleryep/miniconda3/bin/pyre.bin",
+  "source_directories": ["."],
+  "ignore_all_errors": [],
+  "search_path": [],
+  "typeshed": "/Users/tyleryep/miniconda3/lib/pyre_check/typeshed/"
+}

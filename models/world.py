@@ -11,7 +11,7 @@ MAX_MARKERS_PER_SQUARE = 101
 # - A hero which exists in a certain cells
 # - Blocked cells that the hero can't pass through
 # - Markers that the hero can pick up and place
-# The hero can face North, South, East or West. 
+# The hero can face North, South, East or West.
 # Hero only gets limited number of function calls
 class World:
 
@@ -22,7 +22,7 @@ class World:
 	# - rows and cols
 	# - heroRow, heroCol and heroDir
 	# - blocked cells
-	# - markers. 
+	# - markers.
 	# See tasks/cs106a for examples
 	def __init__(self, rows, cols, heroRow, heroCol, heroDir, blocked, markers):
 		self.numAPICalls = 0
@@ -42,7 +42,7 @@ class World:
 		heroRow = json['heroRow']
 		heroCol = json['heroCol']
 		heroDir = json['heroDir']
-		
+
 		blocked = np.zeros((rows, cols))
 		for r in range(rows):
 			for c in range(cols):
@@ -129,7 +129,8 @@ class World:
 	def toString(self):
 		worldStr = ''
 		#worldStr += str(self.heroRow) + ', ' + str(self.heroCol) + '\n'
- 		if self.crashed: worldStr += 'CRASHED\n'
+		if self.crashed:
+			worldStr += 'CRASHED\n'
 		for r in range(self.rows-1, -1, -1):
 			rowStr = '|'
 			for c in range(0, self.cols):
@@ -153,7 +154,7 @@ class World:
 	# N = numRows, M = numCols. The first grid is the padding, second is blocked state
 	# the third grid is the beeper locations. The fourth grid is karel.
 	# The rows of the grid are interchanged so the visualization of
-	# karel will match the matrices. If the padding 
+	# karel will match the matrices. If the padding
 	# parameter is not False, return a tensor which is 4xpaddingxpadding.
 	def toTensor(self, padding):
 		tensor = np.zeros([4, self.rows, self.cols])
@@ -231,15 +232,15 @@ class World:
 	def frontIsClear(self):
 		if self.crashed: return
 		self.noteApiCall()
-		if(self.heroDir == 'north'): 
+		if(self.heroDir == 'north'):
 			return self.isClear(self.heroRow + 1, self.heroCol)
-		elif(self.heroDir == 'south'): 
+		elif(self.heroDir == 'south'):
 			return self.isClear(self.heroRow - 1, self.heroCol)
-		elif(self.heroDir == 'east'): 
+		elif(self.heroDir == 'east'):
 			return self.isClear(self.heroRow, self.heroCol + 1)
-		elif(self.heroDir == 'west'): 
+		elif(self.heroDir == 'west'):
 			return self.isClear(self.heroRow, self.heroCol - 1)
-		
+
 
 	# Function: left is clear
 	# ------------------
@@ -247,15 +248,15 @@ class World:
 	def leftIsClear(self):
 		if self.crashed: return
 		self.noteApiCall()
-		if(self.heroDir == 'north'): 
+		if(self.heroDir == 'north'):
 			return self.isClear(self.heroRow, self.heroCol - 1)
-		elif(self.heroDir == 'south'): 
+		elif(self.heroDir == 'south'):
 			return self.isClear(self.heroRow, self.heroCol + 1)
-		elif(self.heroDir == 'east'): 
+		elif(self.heroDir == 'east'):
 			return self.isClear(self.heroRow + 1, self.heroCol)
-		elif(self.heroDir == 'west'): 
+		elif(self.heroDir == 'west'):
 			return self.isClear(self.heroRow - 1, self.heroCol)
-		
+
 
 	# Function: right is clear
 	# ------------------
@@ -263,19 +264,19 @@ class World:
 	def rightIsClear(self):
 		if self.crashed: return
 		self.noteApiCall()
-		if(self.heroDir == 'north'): 
+		if(self.heroDir == 'north'):
 			return self.isClear(self.heroRow, self.heroCol + 1)
-		elif(self.heroDir == 'south'): 
+		elif(self.heroDir == 'south'):
 			return self.isClear(self.heroRow, self.heroCol - 1)
-		elif(self.heroDir == 'east'): 
+		elif(self.heroDir == 'east'):
 			return self.isClear(self.heroRow - 1, self.heroCol)
-		elif(self.heroDir == 'west'): 
+		elif(self.heroDir == 'west'):
 			return self.isClear(self.heroRow + 1, self.heroCol)
-		
+
 
 	# Function: markers present
 	# ------------------
-	# Returns if there is one or more markers present at 
+	# Returns if there is one or more markers present at
 	# the hero pos
 	def markersPresent(self):
 		return self.markers[self.heroRow][self.heroCol] > 0
