@@ -31,7 +31,7 @@ def autoFormat(tree):
 
     def _autoFormat(tree):
         name = tree.rootName
-        if name in ('Program', 'WhenRun', 'Value', 'Color', 'Number'):
+        if name in ('Program', 'WhenRun', 'Value', 'Color', 'Number', 'Variable'):
             if tree.children:
                 return recurseOnChildren(tree)
             return ''
@@ -40,7 +40,10 @@ def autoFormat(tree):
             return f'{name}({recurseOnChildren(tree, separator=", ")})'
 
         if name == 'Repeat':
-            return (f'Repeat({_autoFormat(tree.children[0])}) {{\n'
+            times = ''
+            if tree.children:
+                times = _autoFormat(tree.children[0])
+            return (f'Repeat({times}) {{\n'
                     f'{recurseOnChildren(tree, startChild=1)}\n}}')
 
         if name == 'Body':
@@ -55,11 +58,26 @@ def autoFormat(tree):
                     f'{_autoFormat(tree.children[2])}) {{\n'
                     f'{recurseOnChildren(tree, startChild=3)}\n}}')
 
-        # assert name in ('Left', 'Right', 'Forward', 'Backward', 'RandomColor', '???') \
-        #     or name.isnumeric() \
-        #     or name.ishex()
-        return name
+        if name == 'Arithmetic':
+            op = tree.children[0].rootName
+            sign = '_'
+            if op == 'Add':
+                sign = '+'
+            elif op == 'Subtract':
+                sign = '+'
+            elif op == 'Multiply':
+                sign = 'x'
+            elif op == 'Divide':
+                sign = '/'
+            if len(tree.children) > 2:
+                return (f'({_autoFormat(tree.children[1])} {sign} {_autoFormat(tree.children[2])})')
+            return (f'(_ {sign} _)')
 
-    # print(tree)
+        return name # 6fbf9cf0406cc709e93a037a894d6e62
+
     result = recurseOnChildren(tree, '\n')
     return autoIndent(result)
+
+    # assert name in ('Left', 'Right', 'Forward', 'Backward', 'RandomColor', '???') \
+    #     or name.isnumeric() \
+    #     or name.ishex()

@@ -24,10 +24,11 @@ PROBLEM_1 = "1"
 PROBLEM_2 = "2"
 PROBLEM_4 = "4"
 PROBLEM_9 = "9"
+INSERT_RUBRIC_ITEM = "i"
 
 ALL_KEYS = ("", SUBMISSION_LEFT, SUBMISSION_RIGHT, SPACE, CTRLC, ENTER,
             UNENTER, NEXT, PREV, FIND_ID, SIMPLE_MODE_TOGGLE,
-            PROBLEM_1, PROBLEM_2, PROBLEM_4, PROBLEM_9)
+            PROBLEM_1, PROBLEM_2, PROBLEM_4, PROBLEM_9, INSERT_RUBRIC_ITEM)
 
 def getch():
     ''' Gets a single character from the user. '''
@@ -44,6 +45,7 @@ def getch():
         return ch
     return _getch()
 
+
 def get_action():
     ''' Prints out the prompt and then waits for the user to select an action. '''
     action = None
@@ -53,6 +55,7 @@ def get_action():
               f"Type {SUBMISSION_RIGHT} to see the next submission.\n\n"
               f"Type {FIND_ID} to enter a specific student id.\n\n"
               f"Type {SIMPLE_MODE_TOGGLE} to switch in/out of simple mode.\n\n"
+              f"Type {INSERT_RUBRIC_ITEM} to switch in/out of edit mode.\n\n"
               f"Press SPACE to exit!\n\n")
     print(prompt)
 
@@ -62,6 +65,7 @@ def get_action():
             sys.exit()
     return action
 
+
 class GUIState:
     def __init__(self,
                  action: str = None,
@@ -70,14 +74,16 @@ class GUIState:
                  curr_index: int = 0,
                  curr_student: int = 0,
                  simple_mode: bool = True,
-                 curr_problem: int = 1):
+                 curr_problem: int = 1,
+                 edit_mode: bool = False):
         self.action = action
         self.student_id = student_id
         self.history = history
         self.curr_index = curr_index
         self.curr_student = curr_student
         self.simple_mode = simple_mode
-        self.curr_problem = 1
+        self.curr_problem = curr_problem
+        self.edit_mode = edit_mode
 
     def next_student(self, ids):
         self.curr_student += 1
@@ -117,6 +123,9 @@ class GUIState:
         self.curr_problem = prob_num
         self.curr_index = 0
 
+    def toggle_edit_mode(self):
+        self.edit_mode = not self.edit_mode
+
 
 def show_progress_bar(state, num_submissions):
     LENGTH = 100
@@ -127,6 +136,7 @@ def show_progress_bar(state, num_submissions):
         else:
             print("-" * (LENGTH // num_submissions), end='')
     print("|")
+
 
 def read_data(problem):
     print(f"Loading source file for Problem {problem}")
@@ -140,14 +150,29 @@ def read_data(problem):
     ids = list(activity_data.keys())
     return source_data, activity_data, ids
 
+
+def get_rubric_input(student_id):
+    rubric_line = input("Type in some applicable rubric items: ")
+    if rubric_line != '':
+        student_data = {}
+        with open('data/student-rubric.json') as f:
+            student_data: Dict[List[str]] = json.load(f)
+            if student_id not in student_data:
+                student_data[student_id] = []
+            student_data[student_id].append(rubric_line)
+
+        with open('data/student-rubric.json', 'w') as f:
+            json.dump(student_data, f)
+
+
 def run_gui(problems=(1, 2, 4)):
     data: Dict[Tuple] = {}
     for num in problems:
         data[num] = read_data(num)
 
-    _, _, ids = data[1]
+    _, _, ids = data[problems[0]]
     student_id = random.choice(ids)
-    state = GUIState(student_id=student_id, history=[student_id])
+    state = GUIState(student_id=student_id, history=[student_id], curr_problem=problems[0])
 
     prev_problem = 1
     source_data, activity_data, ids = data[state.curr_problem]
@@ -159,12 +184,12 @@ def run_gui(problems=(1, 2, 4)):
             source_data, activity_data, ids = data[state.curr_problem]
             prev_problem = state.curr_problem
 
+        print("Student id:", state.student_id)
         if state.student_id in activity_data:
             student_submissions = [source_data[str(program_id)] for program_id, _ in activity_data[state.student_id]]
             num_submissions = len(student_submissions)
             problem = student_submissions[state.curr_index]
             program_id, timestamp = activity_data[state.student_id][state.curr_index]
-            print("Student id:", state.student_id)
             print("Submission:", state.curr_index+1, "out of", num_submissions)
             print("Timestamp:", timestamp)
             print("Program Rank:", program_id)
@@ -179,8 +204,16 @@ def run_gui(problems=(1, 2, 4)):
 
             show_progress_bar(state, num_submissions)
         else:
+            print()
             print(f"Student had no submission for Problem {state.curr_problem}.")
 
+        print()
+        with open('data/student-rubric.json') as f:
+            student_data = json.load(f)
+            if state.student_id in student_data:
+                for line in student_data[state.student_id]:
+                    print(line)
+        print()
 
         state.action = get_action()
 
@@ -205,6 +238,12 @@ def run_gui(problems=(1, 2, 4)):
         elif state.action in (PROBLEM_1, PROBLEM_2, PROBLEM_4, PROBLEM_9):
             if int(state.action) in problems:
                 state.change_problem(int(state.action))
+
+        elif state.action == INSERT_RUBRIC_ITEM:
+            state.toggle_edit_mode()
+            get_rubric_input(state.student_id)
+            state.toggle_edit_mode()
+
 
 if __name__ == '__main__':
     run_gui()
