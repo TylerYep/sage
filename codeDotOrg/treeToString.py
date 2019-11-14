@@ -32,7 +32,9 @@ def autoFormat(tree):
     def _autoFormat(tree):
         name = tree.rootName
         if name in ('Program', 'WhenRun', 'Value', 'Color', 'Number'):
-            return _autoFormat(tree.children[0])
+            if tree.children:
+                return recurseOnChildren(tree)
+            return ''
 
         if name in ('Move', 'Turn', 'SetColor'):
             return f'{name}({recurseOnChildren(tree, separator=", ")})'
@@ -44,11 +46,20 @@ def autoFormat(tree):
         if name == 'Body':
             return (f'{recurseOnChildren(tree, separator=newline)}')
 
-        # print(f"{tree.rootName}\n")
+        if name == 'For':
+            if len(tree.children) < 3:
+                return (f'For() {{\n'
+                        f'{recurseOnChildren(tree)}\n}}')
+            return (f'For({_autoFormat(tree.children[0])}, '
+                    f'{_autoFormat(tree.children[1])}, '
+                    f'{_autoFormat(tree.children[2])}) {{\n'
+                    f'{recurseOnChildren(tree, startChild=3)}\n}}')
+
         # assert name in ('Left', 'Right', 'Forward', 'Backward', 'RandomColor', '???') \
         #     or name.isnumeric() \
         #     or name.ishex()
         return name
 
-    result = recurseOnChildren(tree, '\n', 1)
+    # print(tree)
+    result = recurseOnChildren(tree, '\n')
     return autoIndent(result)
