@@ -27,7 +27,8 @@ def _loadItem(key, itemName):
 	return pickle.load(open(path, 'rb'), encoding="latin1")
 
 def convert_to_json():
-	for i in (1, 2, 4, 9):
+	for i in range(1, 11):
+		print(f"Converting Problem {i}")
 		for filetype in ('activities', 'countMap', 'levelIdMap', 'sources', 'sourcesSmall'):
 			dict_to_convert = _loadItem(f'p{i}', filetype)
 			with open(f'data/p{i}/{filetype}-{i}.json', 'w') as f:
