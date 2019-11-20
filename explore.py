@@ -171,7 +171,7 @@ def get_rubric_input(student_id):
             student_data: Dict[List[str]] = json.load(f)
             if student_id not in student_data:
                 student_data[student_id] = []
-            student_data[student_id].append(rubric_numbers[int(rubric_line)])
+            student_data[student_id].append(rubric_numbers[int(rubric_line)-1])
 
         with open('data/student-rubric.json', 'w') as f:
             json.dump(student_data, f, indent=2)

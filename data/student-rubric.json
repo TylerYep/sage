@@ -1,3 +1,14 @@
 {
-
+  "0772d90ac8bbe8011c2cc82c9fa87c82": [
+    "extraRepeat"
+  ],
+  "160198dcf6303f377c1cf7546ee71d11": [
+    "degreeChangeBy1"
+  ],
+  "8bc4a17ebd7398c72e9d00dbff07eab5": [
+    "moveChangeBy1",
+    "moveChangeBy5",
+    "correctTurnLeft",
+    "addRepeat"
+  ]
 }
