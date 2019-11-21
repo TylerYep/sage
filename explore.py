@@ -20,15 +20,12 @@ NEXT = "n"
 PREV = "p"
 FIND_ID = "f"
 SIMPLE_MODE_TOGGLE =  "s"
-PROBLEM_1 = "1"
-PROBLEM_2 = "2"
-PROBLEM_4 = "4"
-PROBLEM_9 = "9"
+PROBLEMS = [str(i) for i in range(1, 11)]
 INSERT_RUBRIC_ITEM = "i"
 
 ALL_KEYS = ("", SUBMISSION_LEFT, SUBMISSION_RIGHT, SPACE, CTRLC, ENTER,
             UNENTER, NEXT, PREV, FIND_ID, SIMPLE_MODE_TOGGLE,
-            PROBLEM_1, PROBLEM_2, PROBLEM_4, PROBLEM_9, INSERT_RUBRIC_ITEM)
+            *PROBLEMS, INSERT_RUBRIC_ITEM)
 
 def getch():
     ''' Gets a single character from the user. '''
@@ -152,20 +149,35 @@ def read_data(problem):
 
 
 def get_rubric_input(student_id):
+    prompt = ""
+    rubric_numbers = []
+    MAX_LINE_LENGTH = 36
+    with open('data/rubric-items.json') as f:
+        rubric_items: Dict[List[str]] = json.load(f)
+        i = 0
+        for category in rubric_items:
+            for rubric_item in rubric_items[category]:
+                i += 1
+                rubric_numbers.append(rubric_item)
+                z = f"{i}. {rubric_item}"
+                print(z, end=(' ' * (MAX_LINE_LENGTH-len(z))))
+                if i % 5 == 0:
+                    print()
+
     rubric_line = input("Type in some applicable rubric items: ")
-    if rubric_line != '':
+    if rubric_line != '' and rubric_line.isdigit() and int(rubric_line) < len(rubric_numbers):
         student_data = {}
         with open('data/student-rubric.json') as f:
             student_data: Dict[List[str]] = json.load(f)
             if student_id not in student_data:
                 student_data[student_id] = []
-            student_data[student_id].append(rubric_line)
+            student_data[student_id].append(rubric_numbers[int(rubric_line)-1])
 
         with open('data/student-rubric.json', 'w') as f:
-            json.dump(student_data, f)
+            json.dump(student_data, f, indent=2)
 
 
-def run_gui(problems=(1, 2, 4)):
+def run_gui(problems=(1,)):
     data: Dict[Tuple] = {}
     for num in problems:
         data[num] = read_data(num)
@@ -174,7 +186,7 @@ def run_gui(problems=(1, 2, 4)):
     student_id = random.choice(ids)
     state = GUIState(student_id=student_id, history=[student_id], curr_problem=problems[0])
 
-    prev_problem = 1
+    prev_problem = problems[0]
     source_data, activity_data, ids = data[state.curr_problem]
 
     while state.action != SPACE:
@@ -235,7 +247,7 @@ def run_gui(problems=(1, 2, 4)):
         elif state.action == SIMPLE_MODE_TOGGLE:
             state.toggle_simple_mode()
 
-        elif state.action in (PROBLEM_1, PROBLEM_2, PROBLEM_4, PROBLEM_9):
+        elif state.action in PROBLEMS:
             if int(state.action) in problems:
                 state.change_problem(int(state.action))
 
@@ -261,14 +273,10 @@ if __name__ == '__main__':
     # 70e90d1d1273b4940bb8d0af3faadf72
     # 919d02f28230e7f543880fdb22845874
 
-
-
 '''
 print(f"Loading count map for Problem {problem}")
 with open(f'data/p{problem}/countMap-{problem}.json') as count_file:
     count_data = json.load(count_file, cls=TreeDecoder)
 
 print("Program Rank:", program_id, f"(similar programs:{count_data[str(program_id)]})")
-
-
 '''

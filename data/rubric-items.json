@@ -1,0 +1,51 @@
+{
+  "Move": [
+    "addMoveBackward",
+    "correctMoveForward",
+    "extraMove"
+  ],
+  "Distance": [
+    "fromCorrectToWrongDistance",
+    "correctDistance",
+    "moveChangeBy50",
+    "moveChangeBy5",
+    "moveChangeBy1"
+  ],
+  "Degree": [
+    "fromCorrectToWrongDegree",
+    "degreeChangeBy1",
+    "degreeChangeBy5",
+    "degreeChangeBy30",
+    "degreeChangeBy45",
+    "degreeChangeByMore",
+    "correctDegree"
+  ],
+  "Repeat": [
+    "missingRepeat",
+    "correctNumRepeat",
+    "addRepeat",
+    "extraRepeat",
+    "addNestedRepeat"
+  ],
+  "Turn": [
+    "addTurnLeft",
+    "correctTurnRight",
+    "correctTurnLeft",
+    "addTurnRight",
+    "turnRight(360-x)",
+    "extraTurn"
+  ],
+  "ForLoop": [
+    "offByOneIncrement",
+    "offByOneStartOrEnd",
+    "correctStart",
+    "correctEnd",
+    "correctIncrement"
+  ],
+  "Etc": [
+    "useRepeatOverDuplicateCode",
+    "combinesIntoOneStatement",
+    "correctOrderingMoveTurn",
+    "exprsOutsideOfLoop"
+  ]
+}
