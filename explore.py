@@ -5,6 +5,7 @@ import json
 import random
 from tree_encoder import TreeDecoder
 from copy import deepcopy
+import pickle
 
 from codeDotOrg import autoFormat
 
@@ -137,12 +138,12 @@ def show_progress_bar(state, num_submissions):
 
 def read_data(problem):
     print(f"Loading source file for Problem {problem}")
-    with open(f'data/p{problem}/sources-{problem}.json') as source_file:
-        source_data = json.load(source_file, cls=TreeDecoder)
+    with open(f'data/p{problem}/sources-{problem}.pickle', 'rb') as source_file:
+        source_data = pickle.load(source_file)
 
     print(f"Loading activities map for Problem {problem}")
-    with open(f'data/p{problem}/activities-{problem}.json') as activity_file:
-        activity_data = json.load(activity_file, cls=TreeDecoder)
+    with open(f'data/p{problem}/activities-{problem}.pickle', 'rb') as activity_file:
+        activity_data = pickle.load(activity_file)
 
     ids = list(activity_data.keys())
     return source_data, activity_data, ids
@@ -177,7 +178,7 @@ def get_rubric_input(student_id):
             json.dump(student_data, f, indent=2)
 
 
-def run_gui(problems=(1,)):
+def run_gui(problems=(1, 9)):
     data: Dict[Tuple] = {}
     for num in problems:
         data[num] = read_data(num)

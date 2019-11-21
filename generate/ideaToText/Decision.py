@@ -93,6 +93,10 @@ class Decision:
     def turnOnRubric(self, key):
         self._engine.rubric[key] = True
 
+    # -------------- NEW METHOD --------------
+    def turnOffRubric(self, key):
+        self._engine.rubric[key] = False
+    # -------------- NEW METHOD --------------
 
 
     ##############################################
