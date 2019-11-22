@@ -37,8 +37,8 @@ class Sampler:
         rubricItems = self.rubric
         choices = self.choices
         sample = {
-            'text':sampleText, 
-            'rubric':rubricItems, 
+            'text':sampleText,
+            'rubric':rubricItems,
             'choices':choices
         }
         return sample
@@ -46,7 +46,7 @@ class Sampler:
 
     ################################################
     # The rest of this class is private. Read only if
-    # you are curious how it is implemented. You 
+    # you are curious how it is implemented. You
     # shouldn't need to read any further to use ideaToText
     #################################################
 
@@ -79,12 +79,12 @@ class Sampler:
         '''
          This method should loop through all decisions and get their preregistered ids.
          This will give us an overview of how each reusable decision is intended to be used.
-         
+
          We group these registered ids by the ReusableDecision they are relevatn to and
          return a dictionary from ReusableDecision name to set of valid ids for that decision.
         '''
         # we keep track of the reusable non terminals
-        
+
         allRegisteredIds = defaultdict(list)
         for nonterminal in nonterminals.values():
             baseClass = str(nonterminal.__class__.__base__)
@@ -95,13 +95,13 @@ class Sampler:
 
                 for reusable_decision, valid_ids in registeredIds.items():
                     allRegisteredIds[reusable_decision].extend(list(valid_ids))
-       
+
         registeredButNotReusable = set(allRegisteredIds.keys()) - reusableNonterminals
         reusableButNotRegistered = reusableNonterminals - set(allRegisteredIds.keys())
         # make sure evely registeredId corresponds to a reusable decision.
         if registeredButNotReusable:
             raise ValueError(f'Invalid registration of non-reusable decisions {registeredButNotReusable}')
-        
+
         # print warnings for reusable decisions that dont have valid ids registered?
         if reusableButNotRegistered:
             print(f'WARNING: reusable decisions not registered anywhere: {reusableButNotRegistered}')
@@ -128,6 +128,7 @@ class Sampler:
         nonterminals = {}
         reusableNonterminals = set()
         file_paths = glob.glob(os.path.join(grammar_dir, "*.py"))
+        print(file_paths)
         files = [ f[:-3].replace(os.path.sep, '.') for f in file_paths if isfile(f) and not f.endswith('__init__.py')]
         for f in files:
             module = __import__(f, fromlist=['object'])
@@ -135,11 +136,11 @@ class Sampler:
                 if not obj.startswith('__'):
                     clazz = module.__getattribute__(obj)
                     # TODO: fix hacky conditions
-                    
+
                     if inspect.isclass(clazz) and clazz.__base__.__name__.endswith('Decision') and not clazz.__name__ == 'ReusableDecision':
                         name = clazz.__name__
                         if clazz.__base__.__name__ == 'ReusableDecision':
-                            reusableNonterminals.add(name)                        
+                            reusableNonterminals.add(name)
 
                         if name in nonterminals:
                             raise ValueError('Repeated name for nonterminal: {}'.format(name))

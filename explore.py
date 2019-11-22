@@ -138,12 +138,12 @@ def show_progress_bar(state, num_submissions):
 
 def read_data(problem):
     print(f"Loading source file for Problem {problem}")
-    with open(f'data/p{problem}/sources-{problem}.pickle', 'rb') as source_file:
-        source_data = pickle.load(source_file)
+    with open(f'data/p{problem}/sources-{problem}.json', 'rb') as source_file:
+        source_data = json.load(source_file, cls=TreeDecoder)
 
     print(f"Loading activities map for Problem {problem}")
-    with open(f'data/p{problem}/activities-{problem}.pickle', 'rb') as activity_file:
-        activity_data = pickle.load(activity_file)
+    with open(f'data/p{problem}/activities-{problem}.json', 'rb') as activity_file:
+        activity_data = json.load(activity_file, cls=TreeDecoder)
 
     ids = list(activity_data.keys())
     return source_data, activity_data, ids
@@ -178,7 +178,7 @@ def get_rubric_input(student_id):
             json.dump(student_data, f, indent=2)
 
 
-def run_gui(problems=(1, 9)):
+def run_gui(problems=(1, 4)):
     data: Dict[Tuple] = {}
     for num in problems:
         data[num] = read_data(num)
@@ -274,6 +274,8 @@ if __name__ == '__main__':
     # 70e90d1d1273b4940bb8d0af3faadf72
     # 919d02f28230e7f543880fdb22845874
 
+
+# MY FAVORITE: dff01204325d3fdaa01f4b4f9d23d713
 '''
 print(f"Loading count map for Problem {problem}")
 with open(f'data/p{problem}/countMap-{problem}.json') as count_file:
