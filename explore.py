@@ -145,6 +145,10 @@ def read_data(problem):
     with open(f'data/p{problem}/activities-{problem}.json', 'rb') as activity_file:
         activity_data = json.load(activity_file, cls=TreeDecoder)
 
+    print(f"Loading sourceCode-to-problemID map for Problem {problem}")
+    with open(f'data/p{problem}/code2problemID-{problem}.json', 'rb') as activity_file:
+        activity_data = json.load(activity_file, cls=TreeDecoder)
+
     ids = list(activity_data.keys())
     return source_data, activity_data, ids
 

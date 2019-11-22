@@ -20,7 +20,7 @@ class Start(Decision):
             self.turnOnRubric('hasCode')
 
     def render(self):
-        with open('p1/sources-1.json') as f:
+        with open('../data/p1/sources-1.json') as f:
             source_data = json.load(f, cls=TreeDecoder)
             random_program = source_data["0"]
             print(random_program)
