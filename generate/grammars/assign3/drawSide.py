@@ -14,7 +14,7 @@ class DrawSide(Decision):
 
         self.addChoice('sideExtraCode', {
             'noExtraCode': 95,
-            'extraCode': 5
+            'extraCode': 25
         })
 
         self.addChoice('hasLeft', {
@@ -24,7 +24,7 @@ class DrawSide(Decision):
 
         self.addChoice('hasMove', {
             'forgotMove': 80,
-            'hasMove': 20
+            'hasMove': 50
         })
 
     def updateRubric(self):
@@ -53,4 +53,3 @@ class DrawSide(Decision):
             return hasMove + hasTurn + extra
         else:
             return hasTurn + hasMove + extra
-

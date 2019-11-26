@@ -8,8 +8,7 @@ class TreeEncoder(json.JSONEncoder):
         if isinstance(o, Tree):
             return {'type': 'Tree',
 					'rootName': o.rootName,
-                    'children': o.children
-				   }
+                    'children': o.children}
         return json.JSONEncoder.default(self, o)
 
 

@@ -13,6 +13,11 @@ class CreateSquare(Decision):
             'noLoopForSquare': 20
         })
 
+        self.addChoice('randomOrOneSide', {
+            'oneSide': 70,
+            'random': 50,
+            'randomFive': 50
+        })
 
     def updateRubric(self):
         if self.getChoice('makesSquare') == 'noSquare':
@@ -23,6 +28,8 @@ class CreateSquare(Decision):
     def render(self):
         squareForLoop = self.getChoice('squareUsesForLoop')
         makesSquare = self.getChoice('makesSquare')
+        randomOrOneSide = self.getChoice('randomOrOneSide')
+
         if makesSquare == 'hasSquare':
             if squareForLoop == 'noLoopForSquare':
                 return '''
@@ -37,4 +44,14 @@ class CreateSquare(Decision):
                         {DrawSide}
                     }}
                 '''
+        if randomOrOneSide == 'oneSide':
+            return '{DrawSide}'
+        if randomOrOneSide == 'randomFive':
+            return '''
+            {ExtraCode}
+            {ExtraCode}
+            {ExtraCode}
+            {ExtraCode}
+            {ExtraCode}
+            '''
         return '{ExtraCode}'

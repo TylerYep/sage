@@ -11,7 +11,7 @@ class Start(Decision):
             'noCode': 5
         })
         self.addChoice('outerForLoop', {
-            'hasOuterForLoop': 100,
+            'hasOuterForLoop': 80,
             'noOuterForLoop': 20
         })
         self.addChoice('squareExtraCode', {
@@ -22,17 +22,21 @@ class Start(Decision):
             'rightOrder': 80,
             'wrongOrder': 20
         })
+        self.addChoice('sideOrSquare', {
+            'side': 80,
+            'square': 20
+        })
 
     def updateRubric(self):
-        # if self.getChoice('codeOrNo') == 'noCode':
-        #     self.turnOnRubric('no-code')
-        # else:
-        if self.getChoice('outerForLoop') == 'noOuterForLoop':
-            self.turnOnRubric('shapeLoop-none')
-            if self.getChoice('mixedUpOrder') == 'wrongOrder':
-                self.turnOnRubric('shapeLoopHeader-wrongOrder')
-        if self.getChoice('squareExtraCode') == 'extraCode':
-            self.turnOnRubric('square-armsLength')
+        if self.getChoice('codeOrNo') == 'noCode':
+            self.turnOnRubric('no-code')
+        else:
+            if self.getChoice('outerForLoop') == 'noOuterForLoop':
+                self.turnOnRubric('shapeLoop-none')
+                if self.getChoice('mixedUpOrder') == 'wrongOrder':
+                    self.turnOnRubric('shapeLoopHeader-wrongOrder')
+            if self.getChoice('squareExtraCode') == 'extraCode':
+                self.turnOnRubric('square-armsLength')
 
 
     def render(self):
@@ -52,4 +56,6 @@ class Start(Decision):
             }}
             '''
 
+        if self.getChoice('sideOrSquare') =='side':
+            return '{DrawSide}'
         return '{CreateSquare}'

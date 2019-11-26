@@ -5,6 +5,7 @@ __pycache__/
 .DS_Store
 data/p*
 p1_all_attempts.txt
+generate/generated/
 
 # C extensions
 *.so

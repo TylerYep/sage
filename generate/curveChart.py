@@ -12,9 +12,7 @@ def main():
 		with open(f'data/p{problem}/countMap-{problem}.pickle', 'rb') as count_file:
 			plt.clf()
 			count_data = pickle.load(count_file)
-			keys = np.array(list(count_data.keys()))
-			values = np.array(list(count_data.values()))
-			(keys,values) = zip(*count_data.items())
+			keys, values = zip(*count_data.items())
 			plt.plot(keys, np.log(values))
 			plt.title(f'Curve Chart for Problem {problem}')
 			plt.xlabel(f'Ranking of Submission (out of {len(values)} unique submissions)')

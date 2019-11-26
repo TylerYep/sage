@@ -2,7 +2,7 @@ import os
 import os.path
 import pickle
 import json
-from tree_encoder import TreeEncoder, TreeDecoder
+from tree_encoder import TreeEncoder
 
 DATA_SET_ROOT = 'data/'
 
@@ -31,7 +31,7 @@ def convert_to_json():
 		print(f"Converting Problem {i}")
 		for filetype in ('activities', 'countMap', 'levelIdMap', 'sources', 'sourcesSmall'):
 			dict_to_convert = _loadItem(f'p{i}', filetype)
-			with open(f'data/p{i}/{filetype}-{i}.json', 'w') as f:
+			with open(f'{DATA_SET_ROOT}p{i}/{filetype}-{i}.json', 'w') as f:
 				json.dump(dict_to_convert, f, indent=2, cls=TreeEncoder)
 
 

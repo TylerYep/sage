@@ -36,8 +36,14 @@ def autoFormat(tree):
                 return recurseOnChildren(tree)
             return ''
 
-        if name in ('Move', 'Turn', 'SetColor'):
+        if name == 'SetColor':
             return f'{name}({recurseOnChildren(tree, separator=", ")})'
+
+        if name in ('Move', 'Turn'):
+            direction = _autoFormat(tree.children[0])
+            if direction == 'Forward':
+                direction = ''
+            return f'{name}{direction}({recurseOnChildren(tree, startChild=1, separator=", ")})'
 
         if name == 'Repeat':
             times = ''
@@ -73,7 +79,7 @@ def autoFormat(tree):
                 return (f'({_autoFormat(tree.children[1])} {sign} {_autoFormat(tree.children[2])})')
             return (f'(_ {sign} _)')
 
-        return name # 6fbf9cf0406cc709e93a037a894d6e62
+        return name
 
     result = recurseOnChildren(tree, '\n')
     return autoIndent(result)

@@ -41,4 +41,3 @@ For each problem in Code.org, we can build a rubric of mistakes the students are
   * Their ability randomly grows and rubric items change, and build our dataset.
   * Zero-shot learning problem.
 3. Validation - given a real student, predict student ability a_{final} using marked rubric items, and get a sense of the slope of a student's growth. See which rubric buckets change the most over time.
-

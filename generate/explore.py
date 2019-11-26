@@ -72,8 +72,7 @@ class GUIState:
                  curr_index: int = 0,
                  curr_student: int = 0,
                  simple_mode: bool = True,
-                 curr_problem: int = 1,
-                 edit_mode: bool = False):
+                 curr_problem: int = 1):
         self.action = action
         self.student_id = student_id
         self.history = history
@@ -81,7 +80,6 @@ class GUIState:
         self.curr_student = curr_student
         self.simple_mode = simple_mode
         self.curr_problem = curr_problem
-        self.edit_mode = edit_mode
 
     def next_student(self, ids):
         self.curr_student += 1
@@ -121,9 +119,6 @@ class GUIState:
         self.curr_problem = prob_num
         self.curr_index = 0
 
-    def toggle_edit_mode(self):
-        self.edit_mode = not self.edit_mode
-
 
 def show_progress_bar(state, num_submissions):
     LENGTH = 100
@@ -138,23 +133,22 @@ def show_progress_bar(state, num_submissions):
 
 def read_data(problem):
     print(f"Loading source file for Problem {problem}")
-    with open(f'data/p{problem}/sources-{problem}.json', 'rb') as source_file:
+    with open(f'data/p{problem}/sources-{problem}.json') as source_file:
         source_data = json.load(source_file, cls=TreeDecoder)
 
     print(f"Loading activities map for Problem {problem}")
-    with open(f'data/p{problem}/activities-{problem}.json', 'rb') as activity_file:
+    with open(f'data/p{problem}/activities-{problem}.json') as activity_file:
         activity_data = json.load(activity_file, cls=TreeDecoder)
 
-    print(f"Loading sourceCode-to-problemID map for Problem {problem}")
-    with open(f'data/p{problem}/code2problemID-{problem}.json', 'rb') as activity_file:
-        activity_data = json.load(activity_file, cls=TreeDecoder)
+    # print(f"Loading sourceCode-to-problemID map for Problem {problem}")
+    # with open(f'data/p{problem}/code2problemID-{problem}.json') as activity_file:
+    #     activity_data = json.load(activity_file, cls=TreeDecoder)
 
     ids = list(activity_data.keys())
     return source_data, activity_data, ids
 
 
 def get_rubric_input(student_id):
-    prompt = ""
     rubric_numbers = []
     MAX_LINE_LENGTH = 36
     with open('data/rubric-items.json') as f:
@@ -164,8 +158,8 @@ def get_rubric_input(student_id):
             for rubric_item in rubric_items[category]:
                 i += 1
                 rubric_numbers.append(rubric_item)
-                z = f"{i}. {rubric_item}"
-                print(z, end=(' ' * (MAX_LINE_LENGTH-len(z))))
+                rub = f"{i}. {rubric_item}"
+                print(rub, end=(' ' * (MAX_LINE_LENGTH-len(rub))))
                 if i % 5 == 0:
                     print()
 
@@ -257,9 +251,7 @@ def run_gui(problems=(1, 4)):
                 state.change_problem(int(state.action))
 
         elif state.action == INSERT_RUBRIC_ITEM:
-            state.toggle_edit_mode()
             get_rubric_input(state.student_id)
-            state.toggle_edit_mode()
 
 
 if __name__ == '__main__':
