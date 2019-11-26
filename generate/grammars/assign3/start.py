@@ -35,8 +35,7 @@ class Start(Decision):
                 self.turnOnRubric('shapeLoop-none')
                 if self.getChoice('mixedUpOrder') == 'wrongOrder':
                     self.turnOnRubric('shapeLoopHeader-wrongOrder')
-            if self.getChoice('squareExtraCode') == 'extraCode':
-                self.turnOnRubric('square-armsLength')
+
 
 
     def render(self):

@@ -4,7 +4,6 @@ import sys
 import json
 import random
 from tree_encoder import TreeDecoder
-from copy import deepcopy
 import pickle
 
 from codeDotOrg import autoFormat
@@ -133,19 +132,19 @@ def show_progress_bar(state, num_submissions):
 
 def read_data(problem):
     print(f"Loading source file for Problem {problem}")
-    with open(f'data/p{problem}/sources-{problem}.json') as source_file:
+    with open(f'../data/p{problem}/sources-{problem}.json') as source_file:
         source_data = json.load(source_file, cls=TreeDecoder)
 
     print(f"Loading activities map for Problem {problem}")
-    with open(f'data/p{problem}/activities-{problem}.json') as activity_file:
+    with open(f'../data/p{problem}/activities-{problem}.json') as activity_file:
         activity_data = json.load(activity_file, cls=TreeDecoder)
 
-    # print(f"Loading sourceCode-to-problemID map for Problem {problem}")
-    # with open(f'data/p{problem}/code2problemID-{problem}.json') as activity_file:
-    #     activity_data = json.load(activity_file, cls=TreeDecoder)
+    print(f"Loading sourceCode-to-rubric map for Problem {problem}")
+    with open(f'generated/uniqueSubs.json') as rubric_file: # -{problem}
+        rubric_data = json.load(rubric_file)
 
     ids = list(activity_data.keys())
-    return source_data, activity_data, ids
+    return source_data, activity_data, ids, rubric_data
 
 
 def get_rubric_input(student_id):
@@ -176,17 +175,16 @@ def get_rubric_input(student_id):
             json.dump(student_data, f, indent=2)
 
 
-def run_gui(problems=(1, 4)):
+def run_gui(problems=(4, )):
     data: Dict[Tuple] = {}
     for num in problems:
         data[num] = read_data(num)
 
-    _, _, ids = data[problems[0]]
+    source_data, activity_data, ids, rubric_data = data[problems[0]]
     student_id = random.choice(ids)
     state = GUIState(student_id=student_id, history=[student_id], curr_problem=problems[0])
 
     prev_problem = problems[0]
-    source_data, activity_data, ids = data[state.curr_problem]
 
     while state.action != SPACE:
         clear()
@@ -204,22 +202,34 @@ def run_gui(problems=(1, 4)):
             print("Submission:", state.curr_index+1, "out of", num_submissions)
             print("Timestamp:", timestamp)
             print("Program Rank:", program_id)
+            program_tree = autoFormat(problem)
 
             print()
             if state.simple_mode:
-                program_tree = autoFormat(problem)
                 print(program_tree)
             else:
                 print(problem)
             print()
 
             show_progress_bar(state, num_submissions)
+
+            print("Rubric items: ")
+            cleaned_program = program_tree.replace('\n', '').replace(' ', '')
+            if cleaned_program in rubric_data:
+                if len(rubric_data[cleaned_program]) == 0:
+                    print("Submission looks good!")
+                for item in rubric_data[cleaned_program]:
+                    print(item)
+            else:
+                print("\nNo rubric items found.")
+                print(cleaned_program)
+
         else:
             print()
             print(f"Student had no submission for Problem {state.curr_problem}.")
 
         print()
-        with open('data/student-rubric.json') as f:
+        with open('../data/student-rubric.json') as f:
             student_data = json.load(f)
             if state.student_id in student_data:
                 for line in student_data[state.student_id]:

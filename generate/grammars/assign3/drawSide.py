@@ -28,7 +28,9 @@ class DrawSide(Decision):
         })
 
     def updateRubric(self):
-        if self.getChoice('hasCode') == 'noCode':
+        if self.getChoice('hasCode') == 'noCode' \
+            and self.hasChoice('squareUsesForLoop') \
+            and self.getChoice('squareUsesForLoop') == 'usesLoopForSquare':
             self.turnOnRubric('side-none')
         else:
             if self.getChoice('moveVsTurnFirst') == 'turnFirst':
@@ -44,6 +46,8 @@ class DrawSide(Decision):
                 self.turnOnRubric('side-forgotMove')
 
     def render(self):
+        if self.getChoice('hasCode') == 'noCode':
+            return ''
         moveVsTurnFirst = self.getChoice('moveVsTurnFirst')
         extra = '{ExtraCode}' if self.getChoice('sideExtraCode') else ''
         hasTurn = '{Turn}\n' if self.getChoice('hasLeft') else ''

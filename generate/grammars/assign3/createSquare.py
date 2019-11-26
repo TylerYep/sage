@@ -15,8 +15,7 @@ class CreateSquare(Decision):
 
         self.addChoice('randomOrOneSide', {
             'oneSide': 70,
-            'random': 50,
-            'randomFive': 50
+            'random': 40
         })
 
     def updateRubric(self):
@@ -46,12 +45,4 @@ class CreateSquare(Decision):
                 '''
         if randomOrOneSide == 'oneSide':
             return '{DrawSide}'
-        if randomOrOneSide == 'randomFive':
-            return '''
-            {ExtraCode}
-            {ExtraCode}
-            {ExtraCode}
-            {ExtraCode}
-            {ExtraCode}
-            '''
         return '{ExtraCode}'
