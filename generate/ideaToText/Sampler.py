@@ -129,6 +129,7 @@ class Sampler:
         reusableNonterminals = set()
         file_paths = glob.glob(os.path.join(grammar_dir, "*.py"))
         files = [ f[:-3].replace(os.path.sep, '.') for f in file_paths if isfile(f) and not f.endswith('__init__.py')]
+        print(files)
         for f in files:
             module = __import__(f, fromlist=['object'])
             for obj in  dir(module):

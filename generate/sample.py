@@ -8,9 +8,11 @@ import ideaToText
 from codeDotOrg import autoFormat
 from tree_encoder import TreeDecoder
 
-GRAMMAR_PATH = 'grammars/assign3'
+CURR_PROBLEM = 1
+GRAMMAR_PATH = f'grammars/p{CURR_PROBLEM}'
+NUM_SAMPLES = 4400
 
-def createDataList(sampler, source_data_contains, n=1000):
+def createDataList(sampler, source_data_contains, count_data_map, n):
 	uniqueSubs, counts = {}, {}
 	num_sampled = 0
 	no_match, match = 0, 0
@@ -30,7 +32,7 @@ def createDataList(sampler, source_data_contains, n=1000):
 		if text not in uniqueSubs:
 			uniqueSubs[text] = sample['rubric']
 			if text in source_data_contains:
-				percent_complete += 1
+				percent_complete += count_data_map[text]
 		if text in source_data_contains:
 			match += 1
 		else:
@@ -43,28 +45,31 @@ def createDataList(sampler, source_data_contains, n=1000):
 
 	with open('generated/data.pkl', 'wb') as f:
 		pickle.dump(data, f)
-	print('Number of submission overlaps:', match)
-	print('Number of out-of-training data:', no_match)
+	print('Number of submission overlaps:', match, '/', num_sampled)
+	print('Number of useless datapoints (not in source):', no_match, '/', num_sampled)
 	print('Percent Complete: ',
-		  f'{percent_complete} / {len(source_data_contains)}',
-		  float(percent_complete) / len(source_data_contains))
-
+		  f'{percent_complete} / {sum(count_data_map.values())}',
+		  float(percent_complete) / sum(count_data_map.values()))
+	print()
 	return uniqueSubs, counts
 
-def sample(problem=4):
-	with open(f'../data/p4/sources-{problem}.json') as source_file:
+def sample(problem=CURR_PROBLEM):
+	with open(f'../data/p{problem}/sources-{problem}.json') as source_file:
 		source_data = json.load(source_file, cls=TreeDecoder)
-
-	source_data_contains = set() # program -> rubric_item
+	with open(f'../data/p{problem}/countMap-{problem}.json') as count_file:
+		count_data = json.load(count_file, cls=TreeDecoder)
+	count_data_map = {}
+	source_data_contains = set() # program
 	for key in source_data:
 		expr = autoFormat(source_data[key]).replace('\n', '').replace(' ', '')
 		source_data_contains.add(expr)
+		count_data_map[expr] = count_data[key]
 
 	sampler = ideaToText.Sampler(GRAMMAR_PATH)
-	uniqueSubs, counts = createDataList(sampler, source_data_contains, 50000) # program -> rubric_item
-	with open('generated/uniqueSubs.json', 'w') as f:
+	uniqueSubs, counts = createDataList(sampler, source_data_contains, count_data_map, NUM_SAMPLES) # program -> rubric_item
+	with open(f'generated/uniqueSubs-{problem}.json', 'w') as f:
 		json.dump(uniqueSubs, f, indent=2)
-	with open('generated/counts.json', 'w') as f:
+	with open(f'generated/counts-{problem}.json', 'w') as f:
 		json.dump(counts, f, indent=2)
 	print(sorted(counts.items(), key=lambda k: k[1], reverse=True)[:500])
 

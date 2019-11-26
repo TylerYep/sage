@@ -20,7 +20,9 @@ class ExtraCode(Decision):
         })
 
     def updateRubric(self):
-        if self.getChoice('extraCode3') != '':
+        if self.getChoice('extraCode') != '' \
+            and self.getChoice('extraCode2') != '' \
+            and self.getChoice('extraCode3') != '':
             self.turnOnRubric('square-armsLength')
 
     def render(self):

@@ -11,16 +11,23 @@ class Start(Decision):
             'noCode': 5
         })
         self.addChoice('completeProblemFirstTry', {
-            'firstTry': 100,
-            'notFirstTry': 5
+            'firstTry': 50,
+            'notFirstTry': 50
+        })
+        self.addChoice('hasRepeat', {
+            'yesRepeat': 50,
+            'noRepeat': 50
         })
 
     def updateRubric(self):
         if self.getChoice('codeOrNo') == 'code':
             self.turnOnRubric('triesBlocks')
+            if self.getChoice('hasRepeat') == 'yesRepeat':
+                self.turnOnRubric('hasRepeat')
 
 
     def render(self):
-        # 
-
-        return '{CreateSquare}'
+        if self.getChoice('hasRepeat') == 'yesRepeat':
+            return '{Repeat}'
+        else:
+            return '{InnerCode}'

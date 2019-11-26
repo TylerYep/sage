@@ -139,12 +139,12 @@ def read_data(problem):
     with open(f'../data/p{problem}/activities-{problem}.json') as activity_file:
         activity_data = json.load(activity_file, cls=TreeDecoder)
 
-    print(f"Loading sourceCode-to-rubric map for Problem {problem}")
-    with open(f'generated/uniqueSubs.json') as rubric_file: # -{problem}
-        rubric_data = json.load(rubric_file)
+    # print(f"Loading sourceCode-to-rubric map for Problem {problem}")
+    # with open(f'generated/uniqueSubs-{problem}.json') as rubric_file: #
+    #     rubric_data = json.load(rubric_file)
 
     ids = list(activity_data.keys())
-    return source_data, activity_data, ids, rubric_data
+    return source_data, activity_data, ids, {} # rubric_data
 
 
 def get_rubric_input(student_id):
@@ -175,7 +175,7 @@ def get_rubric_input(student_id):
             json.dump(student_data, f, indent=2)
 
 
-def run_gui(problems=(4, )):
+def run_gui(problems=(1, )):
     data: Dict[Tuple] = {}
     for num in problems:
         data[num] = read_data(num)
