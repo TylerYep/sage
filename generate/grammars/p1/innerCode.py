@@ -8,16 +8,16 @@ class InnerCode(Decision):
     def registerChoices(self):
         self.addChoice('code', {
             '': 2,
-            'move': 50,
+            'move': 70,
             'turn' : 50
         })
         self.addChoice('code2', {
             '': 20,
             'move': 50,
-            'turn' : 50
+            'turn' : 70
         })
         self.addChoice('code3', {
-            '': 50,
+            '': 70,
             'move': 50,
             'turn' : 50
         })
@@ -27,9 +27,12 @@ class InnerCode(Decision):
             'wrongOrder': 20
         })
 
-        self.addChoice('sameChoice', {
-            'same': 50,
-            'different': 50
+        self.addChoice('manyChoice', {
+            'one': 50,
+            'two': 50,
+            'three': 30,
+            'five': 20,
+            'many': 30
         })
 
     def updateRubric(self):
@@ -48,10 +51,14 @@ class InnerCode(Decision):
         code = self.getChoice('code')
         code2 = self.getChoice('code2')
         code3 = self.getChoice('code3')
-        if self.hasChoice('hasRepeat') and self.getChoice('hasRepeat') == 'noRepeat':
-            if self.getChoice('sameChoice') == 'same':
-                return get_ans(code) * 5
-
+        # if self.hasChoice('hasRepeat') and self.getChoice('hasRepeat') == 'noRepeat':
+        if self.getChoice('manyChoice') == 'one':
+            return get_ans(code)
+        if self.getChoice('manyChoice') == 'two':
+            return get_ans(code) + get_ans(code2)
+        if self.getChoice('manyChoice') == 'three':
+            return get_ans(code) + get_ans(code2) + get_ans(code)
+        if self.getChoice('manyChoice') == 'five':
             return get_ans(code) + get_ans(code2) + get_ans(code) + get_ans(code2) + get_ans(code)
         else:
             return get_ans(code) + get_ans(code2) + get_ans(code3)

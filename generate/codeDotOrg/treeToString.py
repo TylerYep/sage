@@ -22,7 +22,7 @@ def removeColors(tree):
     tree.children = newChildren
 
 
-def autoFormat(tree):
+def autoFormat(tree, keep_set_color=False):
     assert tree.rootName == 'Program'
     newline = "\n"
 
@@ -37,7 +37,9 @@ def autoFormat(tree):
             return ''
 
         if name == 'SetColor':
-            return f'{name}({recurseOnChildren(tree, separator=", ")})'
+            if keep_set_color:
+                return f'{name}({recurseOnChildren(tree, separator=", ")})'
+            return ''
 
         if name in ('Move', 'Turn'):
             direction = _autoFormat(tree.children[0])

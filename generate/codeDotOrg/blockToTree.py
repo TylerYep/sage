@@ -1,4 +1,5 @@
 from .tree import Tree
+from .tokenStack import TokenStack
 
 def parse(code):
     tokens = []
