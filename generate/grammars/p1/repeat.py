@@ -12,7 +12,8 @@ class Repeat(Decision):
             '2' : 10,
             '3' : 40,
             '4': 10,
-            '5': 10
+            '5': 10,
+            '???': 5
         })
 
     def render(self):

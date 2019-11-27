@@ -10,7 +10,7 @@ from tree_encoder import TreeDecoder
 
 CURR_PROBLEM = 1
 GRAMMAR_PATH = f'grammars/p{CURR_PROBLEM}'
-MAX = 200000
+MAX = 100000
 
 def createDataList(sampler, source_data_contains, count_data_map):
 	uniqueSubs = {}
@@ -52,8 +52,8 @@ def createDataList(sampler, source_data_contains, count_data_map):
 
 	with open('generated/data.pkl', 'wb') as f:
 		pickle.dump(data, f)
-	print('Relevant Datapoints: ', useless_counter, '/', len(uniqueSubs))
-	print('Irrelevant Datapoints: ', len(count_data_map), '/', len(uniqueSubs))
+	print('Out-of-distribution Datapoints: ', useless_counter, '/', len(uniqueSubs))
+	print('Relevant Datapoints: ', len(count_data_map)-len(source_data_contains), '/', len(uniqueSubs))
 	print('Percent Complete: ',
 		  f'{percent_complete} / {sum(count_data_map.values())}',
 		  float(percent_complete) / sum(count_data_map.values()))
@@ -73,8 +73,9 @@ def sample(problem=CURR_PROBLEM):
 	source_data_contains = set() # programs
 	for key in source_data:
 		expr = autoFormat(source_data[key]).replace('\n', '').replace(' ', '')
-		source_data_contains.add(expr)
-		count_data_map[expr] = count_data[key]
+		if expr not in source_data_contains:
+			source_data_contains.add(expr)
+			count_data_map[expr] = count_data[key]
 
 	sampler = ideaToText.Sampler(GRAMMAR_PATH)
 	uniqueSubs = createDataList(sampler,
