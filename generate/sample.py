@@ -5,6 +5,7 @@ import json
 import random
 import pickle
 import ideaToText
+from pprint import pprint
 from codeDotOrg import autoFormat
 from tree_encoder import TreeDecoder
 
@@ -52,15 +53,21 @@ def createDataList(sampler, source_data_contains, count_data_map):
 
 	with open('generated/data.pkl', 'wb') as f:
 		pickle.dump(data, f)
-	print('Out-of-distribution Datapoints: ', useless_counter, '/', len(uniqueSubs))
-	print('Relevant Datapoints: ', len(count_data_map)-len(source_data_contains), '/', len(uniqueSubs))
+
+	print('Out-of-distribution Datapoints: ',
+		  useless_counter, '/', len(uniqueSubs))
+
+	print('Relevant Datapoints: ',
+		  len(count_data_map)-len(source_data_contains), '/', len(uniqueSubs))
+
 	print('Percent Complete: ',
-		  f'{percent_complete} / {sum(count_data_map.values())}',
-		  float(percent_complete) / sum(count_data_map.values()))
-	print()
+		  f'{percent_complete} / {sum(count_data_map.values())}  ',
+		  float(percent_complete) / sum(count_data_map.values()), '\n')
+
+	# print('Distribution Matching (Earth-Mover Distance): ', 0)
 
 	leftover = [(source, count_data_map[source]) for source in source_data_contains]
-	print(sorted(leftover, key=lambda k: k[1], reverse=True)[:500])
+	pprint(sorted(leftover, key=lambda k: k[1], reverse=True)[:50])
 
 	return uniqueSubs
 

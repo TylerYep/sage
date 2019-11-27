@@ -35,7 +35,7 @@ class Degrees(Decision):
 
     def updateRubric(self):
         degrees = self.getChoice('degrees')
-        if degrees != '90':
+        if degrees != '120':
             self.turnOnRubric('turn-wrongAmount')
 
         if degrees == '270' and self.getChoice('turn') == 'TurnLeft':

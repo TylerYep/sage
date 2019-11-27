@@ -139,12 +139,12 @@ def read_data(problem):
     with open(f'../data/p{problem}/activities-{problem}.json') as activity_file:
         activity_data = json.load(activity_file, cls=TreeDecoder)
 
-    # print(f"Loading sourceCode-to-rubric map for Problem {problem}")
-    # with open(f'generated/uniqueSubs-{problem}.json') as rubric_file: #
-    #     rubric_data = json.load(rubric_file)
+    print(f"Loading sourceCode-to-rubric map for Problem {problem}")
+    with open(f'generated/uniqueSubs-{problem}.json') as rubric_file: #
+        rubric_data = json.load(rubric_file)
 
     ids = list(activity_data.keys())
-    return source_data, activity_data, ids, {} # rubric_data
+    return source_data, activity_data, ids, rubric_data
 
 
 def get_rubric_input(student_id):
@@ -201,15 +201,13 @@ def run_gui(problems=(1, )):
             program_id, timestamp = activity_data[state.student_id][state.curr_index]
             print("Submission:", state.curr_index+1, "out of", num_submissions)
             print("Timestamp:", timestamp)
-            print("Program Rank:", program_id)
-            program_tree = autoFormat(problem)
+            print("Program Rank:", program_id, '\n')
 
-            print()
+            program_tree = autoFormat(problem)
             if state.simple_mode:
-                print(program_tree)
+                print(program_tree, '\n')
             else:
-                print(problem)
-            print()
+                print(problem, '\n')
 
             show_progress_bar(state, num_submissions)
 
@@ -219,16 +217,13 @@ def run_gui(problems=(1, )):
                 if len(rubric_data[cleaned_program]) == 0:
                     print("Submission looks good!")
                 for item in rubric_data[cleaned_program]:
-                    print(item)
+                    print('   ', item)
             else:
-                print("\nNo rubric items found.")
-                print(cleaned_program)
+                print("\nNo rubric items found.\n")
 
         else:
-            print()
-            print(f"Student had no submission for Problem {state.curr_problem}.")
+            print(f"\nStudent had no submission for Problem {state.curr_problem}.\n")
 
-        print()
         with open('../data/student-rubric.json') as f:
             student_data = json.load(f)
             if state.student_id in student_data:
@@ -280,8 +275,7 @@ if __name__ == '__main__':
     # 70e90d1d1273b4940bb8d0af3faadf72
     # 919d02f28230e7f543880fdb22845874
 
-
-# MY FAVORITE: dff01204325d3fdaa01f4b4f9d23d713
+# MY FAVORITE P1: dff01204325d3fdaa01f4b4f9d23d713
 '''
 print(f"Loading count map for Problem {problem}")
 with open(f'data/p{problem}/countMap-{problem}.json') as count_file:
