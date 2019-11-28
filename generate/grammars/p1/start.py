@@ -28,7 +28,10 @@ class Start(Decision):
 
 
     def render(self):
-        if self.getChoice('hasRepeat') == 'yesRepeat':
-            return '{Repeat}'
+        if self.getChoice('codeOrNo') == 'code':
+            if self.getChoice('hasRepeat') == 'yesRepeat':
+                return '{Repeat}'
+            else:
+                return '{InnerCode}'
         else:
-            return '{InnerCode}'
+            return ''
