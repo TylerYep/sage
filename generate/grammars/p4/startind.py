@@ -9,7 +9,8 @@ class StartInd(Decision):
             '25': 10,
             '50': 10,
             '0': 10,
-            '???': 5
+            '300': 10,
+            '???': 10
         })
 
     def updateRubric(self):

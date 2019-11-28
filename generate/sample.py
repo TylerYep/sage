@@ -1,4 +1,7 @@
 from typing import List, Dict, Tuple
+import matplotlib
+matplotlib.use('MACOSX')
+import matplotlib.pyplot as plt
 import os
 import sys
 import json
@@ -11,7 +14,8 @@ from tree_encoder import TreeDecoder
 
 CURR_PROBLEM = 1
 GRAMMAR_PATH = f'grammars/p{CURR_PROBLEM}'
-MAX = 100000
+MAX = 200000
+REPETITIONS = 3
 
 def createDataList(sampler, source_data_contains, count_data_map):
 	uniqueSubs = {}
@@ -22,10 +26,10 @@ def createDataList(sampler, source_data_contains, count_data_map):
 
 	prev = None
 	no_new_counter = 0
-	while no_new_counter != 3 and num_sampled < MAX:
+	sample_count_map = {}
+	while no_new_counter != REPETITIONS and num_sampled < MAX:
 		if num_sampled % 1000 == 0:
 			print(num_sampled, len(uniqueSubs))
-
 			if len(uniqueSubs) == prev:
 				no_new_counter += 1
 			else:
@@ -41,6 +45,10 @@ def createDataList(sampler, source_data_contains, count_data_map):
 		data.append(new_data)
 
 		text = sample['text'].replace('\n', '').replace(' ', '')
+		if text not in sample_count_map:
+			sample_count_map[text] = 0
+		sample_count_map[text] += 1
+
 		if text not in uniqueSubs:
 			uniqueSubs[text] = sample['rubric']
 			if text in source_data_contains:
@@ -48,10 +56,9 @@ def createDataList(sampler, source_data_contains, count_data_map):
 				source_data_contains.remove(text)
 			else:
 				useless_counter += 1
-
 		num_sampled += 1
 
-	with open('generated/data.pkl', 'wb') as f:
+	with open(f'generated/data-{CURR_PROBLEM}.pkl', 'wb') as f:
 		pickle.dump(data, f)
 
 	print('Out-of-distribution Datapoints: ',
@@ -64,12 +71,26 @@ def createDataList(sampler, source_data_contains, count_data_map):
 		  f'{percent_complete} / {sum(count_data_map.values())}  ',
 		  float(percent_complete) / sum(count_data_map.values()), '\n')
 
-	# print('Distribution Matching (Earth-Mover Distance): ', 0)
-
+	# compute_l1_dist(sample_count_map, count_data_map)
 	leftover = [(source, count_data_map[source]) for source in source_data_contains]
 	pprint(sorted(leftover, key=lambda k: k[1], reverse=True)[:50])
-
 	return uniqueSubs
+
+def compute_l1_dist(sample_count_map, count_data_map):
+	l1_distance = 0
+	arr1, arr2 = [], []
+	for key, v1 in sorted(sample_count_map.items(), key=lambda x: x[1], reverse=True):
+		v2 = count_data_map[key] if key in count_data_map else 0
+		arr1.append(v1)
+		arr2.append(v2)
+		l1_distance += abs(v1 - v2)
+	print('Distribution Matching (L1 Distance):', l1_distance)
+	x = range(len(arr1))
+	plt.yscale('log')
+	plt.plot(x, arr2)
+	plt.plot(x, arr1)
+	# plt.fill_between(x, 0, arr2)
+	plt.show()
 
 def sample(problem=CURR_PROBLEM):
 	with open(f'../data/p{problem}/sources-{problem}.json') as source_file:
