@@ -26,6 +26,10 @@ class Start(Decision):
             'side': 80,
             'square': 20
         })
+        self.addChoice('forLoopVars', {
+            'none': 5,
+            'some': 95
+        })
 
     def updateRubric(self):
         if self.getChoice('codeOrNo') == 'noCode':
@@ -46,6 +50,12 @@ class Start(Decision):
             if self.getChoice('mixedUpOrder') == 'rightOrder':
                 return '''
                 For({StartInd}, {EndInd}, {Increment}) {{
+                   {CreateSquare}
+                }}
+                '''
+            if self.getChoice('forLoopVars') == 'none':
+                return '''
+                For(???, ???, ???) {{
                    {CreateSquare}
                 }}
                 '''

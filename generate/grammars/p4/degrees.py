@@ -6,9 +6,11 @@ class Degrees(Decision):
         self.addChoice('degrees', {
             '45' : 20,
             '90': 40,
+            '120': 10,
             '180' : 10,
             '270' : 40,
-            '100': 10
+            '100': 10,
+            'Counter': 10,
         })
 
     def updateRubric(self):

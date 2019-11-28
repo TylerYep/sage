@@ -4,11 +4,13 @@ class Increment(Decision):
 
     def registerChoices(self):
         self.addChoice('increment', {
+            '0': 5,
             '1': 20,
+            '5': 5,
             '15': 60,
             '20': 30,
             '10': 40,
-            '20': 10,
+            '25': 10,
             '150': 10,
             '315': 10,
             '???': 5

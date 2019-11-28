@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import pickle
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
@@ -10,14 +11,11 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 files = ['activities-4', 'countMap-4', 'levelIdMap-4', 'sources-4', 'sourcesSmall-4']
 
-
 def main():
 	fileName = 'sources-2'
 	# attempts = []
 	with open(fileName + '.csv', 'w', newline='') as csvfile:
-
 		wr = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-
 		studentCodes = {}
 		with open('data/p2/' + fileName + '.json', 'r') as f:
 			data = json.load(f, cls=TreeDecoder) # countMap
@@ -33,13 +31,13 @@ def main():
 def makeLifeEasier():
 	fileName = 'sources-1'
 	studentCodes = {}
-	data = pickle.load(open('data/p1/' + fileName + '.pickle', 'rb')) # countMap
+	data = pickle.load(open('p1/' + fileName + '.pickle', 'rb')) # countMap
 	for key in data:
 		studentCodes[key] = str(data[key])
 
 	fileName = 'activities-1'
 	studentAttempts = {}
-	data = pickle.load(open('data/p1/' + fileName + '.pickle', 'rb')) # countMap
+	data = pickle.load(open('p1/' + fileName + '.pickle', 'rb')) # countMap
 
 	studentCount = 0
 	start = 0

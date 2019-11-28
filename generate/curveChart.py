@@ -4,9 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def main():
-	start = 1 # should be 1
-	end = 10 # should be 10
-	problems = [i for i in range(start, end + 1)]
+	problems = [i for i in range(1, 11)]
 	for problem in problems:
 		print(f"Loading count map for Problem {problem}")
 		with open(f'data/p{problem}/countMap-{problem}.pickle', 'rb') as count_file:

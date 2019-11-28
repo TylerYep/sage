@@ -5,11 +5,12 @@ class NumSides(Decision):
     def registerChoices(self):
         self.addChoice('numSides', {
             '0': 40,
-            '1' : 5,
+            '1' : 10,
             '2' : 40,
             '3': 40,
             '4' : 70,
             '5': 40,
+            '20': 10
         })
 
     def updateRubric(self):
