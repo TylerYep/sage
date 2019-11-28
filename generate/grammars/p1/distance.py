@@ -13,7 +13,7 @@ class Distance(Decision):
             '100': 10,
             '17': 1,
             '30': 1,
-            '40': 1
+            '40': 1,
         })
 
     def updateRubric(self):
