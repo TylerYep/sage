@@ -13,7 +13,8 @@ class Repeat(Decision):
             '3' : 40,
             '4': 10,
             '5': 10,
-            '???': 5
+            '???': 5,
+            '50': 1
         })
 
     def updateRubric(self):
