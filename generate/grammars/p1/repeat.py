@@ -16,6 +16,10 @@ class Repeat(Decision):
             '???': 5
         })
 
+    def updateRubric(self):
+        if self.getChoice('times') != '3':
+            self.turnOnRubric('triangle-wrongNumSides')
+
     def render(self):
         times = self.getChoice('times')
         return '''

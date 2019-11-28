@@ -21,9 +21,10 @@ class Start(Decision):
 
     def updateRubric(self):
         if self.getChoice('codeOrNo') == 'code':
-            self.turnOnRubric('triesBlocks')
-            if self.getChoice('hasRepeat') == 'yesRepeat':
-                self.turnOnRubric('hasRepeat')
+            if self.getChoice('hasRepeat') == 'noRepeat':
+                self.turnOnRubric('missingRepeat')
+        else:
+            self.turnOnRubric('noCode')
 
 
     def render(self):

@@ -35,12 +35,12 @@ class Degrees(Decision):
 
     def updateRubric(self):
         degrees = self.getChoice('degrees')
-        if degrees != '120':
-            self.turnOnRubric('turn-wrongAmount')
-
-        if degrees == '270' and self.getChoice('turn') == 'TurnLeft':
+        if degrees == '240' and self.getChoice('turn') == 'TurnRight':
             self.turnOnRubric('turn-rightLeftConfusion')
-        elif degrees == '90' and self.getChoice('turn') == 'TurnRight':
+        elif degrees != '120':
+            self.turnOnRubric('turn-wrongAmount')
+        
+        if self.getChoice('turn') == 'TurnRight':
             self.turnOnRubric('turn-rightLeftConfusion')
 
     def render(self):

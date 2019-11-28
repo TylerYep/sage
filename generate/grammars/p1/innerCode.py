@@ -17,7 +17,6 @@ class InnerCode(Decision):
             'turn' : 70
         })
         self.addChoice('code3', {
-            '': 70,
             'move': 50,
             'turn' : 50
         })
@@ -38,8 +37,13 @@ class InnerCode(Decision):
     def updateRubric(self):
         if self.getChoice('code') != '' \
             and self.getChoice('code2') != '' \
-            and self.getChoice('code3') != '':
+            and self.getChoice('manyChoice') != 'one' \
+            and self.getChoice('manyChoice') != 'two':
             self.turnOnRubric('triangle-armsLength')
+        elif self.getChoice('code') == 'turn' \
+            and self.getChoice('code2') == 'move' \
+            and self.getChoice('code3') == '':
+            self.turnOnRubric('triangle-wrongMoveTurnOrder')
 
     def render(self):
         def get_ans(code):
