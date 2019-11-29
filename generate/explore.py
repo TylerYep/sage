@@ -18,9 +18,6 @@ from lstmmodels import FeedbackNN
 from config import TRAINING_PARAMS, DATA_DIR, CHECKPOINT_DIR
 
 
-def clear(): return os.system('clear')
-
-
 USE_FEEDBACK_NN = True
 
 SUBMISSION_LEFT = "["
@@ -252,7 +249,7 @@ def run_gui(problems=(1, )):
     prev_problem = problems[0]
 
     while state.action != SPACE:
-        clear()
+        os.system('clear')
 
         if state.curr_problem != prev_problem:
             source_data, activity_data, ids = data[state.curr_problem]

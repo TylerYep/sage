@@ -3,31 +3,37 @@ CS 398 Final Project
 By Tyler Yep, Jesse Doan
 
 # Instructions
+Adding more documentation because, heavens, we have guests!
 Obtain the Code Studio data from Chris Piech (cpiech) and put it in `data/`.
 
 ## Data Exploration
 Run `python data_loader.py` to convert the data to json.
 
+Set `USE_FEEDBACK_NN = False` in explore.py.
+
 Then, run `python explore.py` to examine specific data examples.
 
-## Grader
-Run `python sample.py` to get the training data.
+## Autograder
+Jump into generate with `cd generate/`.
 
-Run `python preprocess.py [data_path_here.pkl]` to convert the data.
+Run `python sample.py` to get training data. This will also give the top 50 submissions in the source data that were not represented in your grammar. Fix your grammar!
+
+Run `python preprocess.py [data_path_here.pkl]` to convert/split the data into train/val/test.
 
 Run `python train.py` to train the model.
 
-Then, run `python explore.py` to examine specific data examples.
+Run `python explore.py` to examine specific data examples.
 
 
 # TODO
-1. Visualizing this data somehow (cluster neighbors).
-2. Order by number of submissions.
+1. Visualizing this data somehow (cluster neighbors). @Peter/Natalie/Andrew
+2. Order by number of submissions?
 
-## Baseline
-
-
-
+## Milestones
+- Write a grammar for p1.
+- Created data exploration tool.
+- Create visualizer for rubric sampled AI.
+- Anomaly Detection.
 
 
 # Project Info

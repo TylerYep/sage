@@ -9,6 +9,7 @@ generate/generated/
 generate/checkpoints/
 generate/data/
 !generate/checkpoints/model_best.pth.tar
+.pyre/
 
 # C extensions
 *.so

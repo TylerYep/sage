@@ -24,6 +24,6 @@ class Repeat(Decision):
     def render(self):
         times = self.getChoice('times')
         return '''
-        Repeat(''' + times + ''') {{
-            {InnerCode}
-        }}'''
+            Repeat(''' + times + ''') {{
+                {InnerCode}
+            }}'''
