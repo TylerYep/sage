@@ -22,7 +22,7 @@ def flatten_ast(ast):
     return flat
 
 
-if __name__ == "__main__":
+def main():
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -30,6 +30,9 @@ if __name__ == "__main__":
         help='pickle file of {"program": [...], "label": [[...],[...],...]}',
     )
     args = parser.parse_args()
+
+    with open(os.path.join(DATA_DIR, 'train_data.pickle'), 'rb') as fp:
+        print('DATA_DIR is accessible.')
 
     with open(args.raw_data_path, 'rb') as fp:
         data = pickle.load(fp)
@@ -71,22 +74,25 @@ if __name__ == "__main__":
 
     # process the real student data
 
-    with open(os.path.join(DATA_DIR, 'real-data-500.pk'), 'rb') as fp:
-        real_data = pickle.load(fp)
+    # with open(os.path.join(DATA_DIR, 'real-data-500.pk'), 'rb') as fp:
+    #     real_data = pickle.load(fp)
 
-    num = len(real_data['program'])
-    new_labels = []
-    for i in range(num):
-        label = real_data['label'][i]
-        label_vec = np.zeros(NUM_LABELS)
-        for lab in label:
-            try:
-                label_vec[LABEL_TO_IX[lab]] = 1
-            except:
-                continue
-        new_labels.append(label_vec)
-    new_labels = np.array(new_labels)
+    # num = len(real_data['program'])
+    # new_labels = []
+    # for i in range(num):
+    #     label = real_data['label'][i]
+    #     label_vec = np.zeros(NUM_LABELS)
+    #     for lab in label:
+    #         try:
+    #             label_vec[LABEL_TO_IX[lab]] = 1
+    #         except:
+    #             continue
+    #     new_labels.append(label_vec)
+    # new_labels = np.array(new_labels)
 
-    real_data = {'program': real_data['program'], 'label': new_labels}
-    with open(os.path.join(DATA_DIR, 'transfer.pickle'), 'wb') as fp:
-        pickle.dump(real_data, fp)
+    # real_data = {'program': real_data['program'], 'label': new_labels}
+    # with open(os.path.join(DATA_DIR, 'transfer.pickle'), 'wb') as fp:
+    #     pickle.dump(real_data, fp)
+
+if __name__ == "__main__":
+    main()

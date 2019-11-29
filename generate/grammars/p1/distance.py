@@ -3,16 +3,11 @@ from ideaToText import Decision
 class Distance(Decision):
 
     def registerChoices(self):
-        self.addChoice('distance', {
-            '1': 10,
-            '10': 10,
-            '15': 2,
-            '17': 1,
-            '20': 10,
-            '25': 5,
-            '30': 1,
-            '40': 1
-        })
+        distances = {str(i): (10 if i % 25 == 0 else 1) for i in range(0, 150, 5)}
+        distances['50'] = 60
+        for s in ('1', '16', '17'):
+            distances[s] = 1
+        self.addChoice('distance', distances)
 
     def updateRubric(self):
         if self.getChoice('distance') != '50':

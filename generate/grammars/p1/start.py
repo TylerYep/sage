@@ -26,7 +26,6 @@ class Start(Decision):
         else:
             self.turnOnRubric('noCode')
 
-
     def render(self):
         if self.getChoice('codeOrNo') == 'code':
             if self.getChoice('hasRepeat') == 'yesRepeat':

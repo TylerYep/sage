@@ -4,7 +4,7 @@ import os
 import torch
 import pickle
 
-from models import FeedbackNN
+from lstmmodels import FeedbackNN
 from config import TRAINING_PARAMS, DATA_DIR, CHECKPOINT_DIR
 
 import trainer

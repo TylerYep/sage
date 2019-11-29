@@ -3,7 +3,7 @@
 import os
 import pickle
 
-from models import FeedbackNN
+from lstmmodels import FeedbackNN
 from config import TRAINING_PARAMS, DATA_DIR
 
 import trainer

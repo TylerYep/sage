@@ -6,7 +6,8 @@ __pycache__/
 data/p*
 p1_all_attempts.txt
 generate/generated/
-
+generate/checkpoints/
+generate/data/
 # C extensions
 *.so
 

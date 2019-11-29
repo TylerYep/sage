@@ -13,34 +13,44 @@ from collections import defaultdict, OrderedDict
 import torch
 
 # map from integers to feedback labels
-IX_TO_LABEL = {
+LABELS = [
     ### Problem 1 ###
-
+    'noCode',
+    'missingRepeat',
+    'triangle-wrongNumSides',
+    'triangle-armsLength',
+    'triangle-wrongMoveTurnOrder',
+    'side-forgotLeft',
+    'side-forgotMove',
+    'move-wrongAmount',
+    'turn-rightLeftConfusion',
+    'turn-wrongAmount',
     ### Problem 1 ###
 
 
 
     ### Problem 4 ###
-    0: 'shapeLoop-none',
-    1: 'square-none',
-    2: 'side-none',
-    3: 'shapeLoopHeader-missingValue',
-    4: 'shapeLoopHeader-wrongOrder',
-    5: 'shapeLoopHeader-wrongDelta',
-    6: 'shapeLoopHeader-wrongEnd',
-    7: 'shapeLoopHeader-wrongStart',
-    8: 'square-armsLength',
-    9: 'square-unrolled',
-    10: 'square-wrongNumSides',
-    11: 'side-forgotLeft',
-    12: 'side-forgotMove',
-    13: 'side-wrongMoveLeftOrder',
-    14: 'side-armsLength',
-    15: 'turn-wrongAmount',
-    16: 'turn-rightLeftConfusion',
-    17: 'move-wrongAmount',
+    # 'shapeLoop-none',
+    # 'square-none',
+    # 'side-none',
+    # 'shapeLoopHeader-missingValue',
+    # 'shapeLoopHeader-wrongOrder',
+    # 'shapeLoopHeader-wrongDelta',
+    # 'shapeLoopHeader-wrongEnd',
+    # 'shapeLoopHeader-wrongStart',
+    # 'square-armsLength',
+    # 'square-unrolled',
+    # 'square-wrongNumSides',
+    # 'side-forgotLeft',
+    # 'side-forgotMove',
+    # 'side-wrongMoveLeftOrder',
+    # 'side-armsLength',
+    # 'turn-wrongAmount',
+    # 'turn-rightLeftConfusion',
+    # 'move-wrongAmount',
     ### Problem 4 ###
-}
+]
+IX_TO_LABEL = {i: label for i, label in enumerate(LABELS)}
 LABEL_TO_IX = dict([[v,k] for k,v in IX_TO_LABEL.items()])
 NUM_LABELS = len(IX_TO_LABEL)
 

@@ -3,12 +3,20 @@ import os
 import sys
 import json
 import random
-from tree_encoder import TreeDecoder
 import pickle
+from tree_encoder import TreeDecoder
+from codeDotOrg import autoFormat, pseudoCodeToTree
+from trainer.utils import LABEL_TO_IX, NUM_LABELS
+from preprocess import flatten_ast
 
-from codeDotOrg import autoFormat
+import numpy as np
+import torch
+from lstmmodels import FeedbackNN
+from config import TRAINING_PARAMS, DATA_DIR, CHECKPOINT_DIR
 
 clear = lambda: os.system('clear')
+
+USE_FEEDBACK_NN = True
 
 SUBMISSION_LEFT = "["
 SUBMISSION_RIGHT = "]"
@@ -139,9 +147,12 @@ def read_data(problem):
     with open(f'../data/p{problem}/activities-{problem}.json') as activity_file:
         activity_data = json.load(activity_file, cls=TreeDecoder)
 
-    print(f"Loading sourceCode-to-rubric map for Problem {problem}")
-    with open(f'generated/uniqueSubs-{problem}.json') as rubric_file: #
-        rubric_data = json.load(rubric_file)
+    if USE_FEEDBACK_NN:
+        rubric_data = {}
+    else:
+        print(f"Loading sourceCode-to-rubric map for Problem {problem}")
+        with open(f'generated/uniqueSubs-{problem}.json') as rubric_file:
+            rubric_data = json.load(rubric_file)
 
     ids = list(activity_data.keys())
     return source_data, activity_data, ids, rubric_data
@@ -173,6 +184,41 @@ def get_rubric_input(student_id):
 
         with open('data/student-rubric.json', 'w') as f:
             json.dump(student_data, f, indent=2)
+
+
+def preprocess(data):
+    programs = []
+    for ast in data:
+        code_list = flatten_ast(ast)
+        code_str = ' '.join(code_list)
+        programs.append(code_str)
+    programs = np.array(programs)
+    return programs
+
+
+def make_prediction(data):
+    checkpoint_path = os.path.join(CHECKPOINT_DIR, 'model_best.pth.tar')  # checkpoint.pth.tar
+    # device = torch.device('cpu')  # no CUDA support for now
+
+    # checkpoint = torch.load(checkpoint_path)
+    # config = checkpoint['config']
+
+    # model = FeedbackNN(vocab_size=checkpoint['vocab_size'],
+    #                     num_labels=checkpoint['num_labels'])
+    # model.load_state_dict(checkpoint['state_dict'])  # load trained model
+    # model = model.eval()
+
+    # # reproducibility
+    # torch.manual_seed(config['seed'])
+    # np.random.seed(config['seed'])
+
+    # with torch.no_grad():
+    #     token_seq = token_seq.to(device)
+    #     token_len = token_len.to(device)
+
+    #     label_out = model(token_seq, token_len)
+    #     pred_npy = torch.round(label_out).detach().numpy()
+    #     print(pred_npy)
 
 
 def run_gui(problems=(1, )):
@@ -213,13 +259,18 @@ def run_gui(problems=(1, )):
 
             print("Rubric items: ")
             cleaned_program = program_tree.replace('\n', '').replace(' ', '')
-            if cleaned_program in rubric_data:
-                if len(rubric_data[cleaned_program]) == 0:
-                    print("Submission looks good!")
-                for item in rubric_data[cleaned_program]:
-                    print('   ', item)
+            if USE_FEEDBACK_NN:
+                data = preprocess(student_submissions)
+                make_prediction(data)
+
             else:
-                print("\nNo rubric items found.\n")
+                if cleaned_program in rubric_data:
+                    if len(rubric_data[cleaned_program]) == 0:
+                        print("Submission looks good!")
+                    for item in rubric_data[cleaned_program]:
+                        print('   ', item)
+                else:
+                    print("\nNo rubric items found.\n")
 
         else:
             print(f"\nStudent had no submission for Problem {state.curr_problem}.\n")
