@@ -28,7 +28,6 @@ LABELS = [
     ### Problem 1 ###
 
 
-
     ### Problem 4 ###
     # 'shapeLoop-none',
     # 'square-none',

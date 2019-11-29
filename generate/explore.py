@@ -4,17 +4,22 @@ import sys
 import json
 import random
 import pickle
-from tree_encoder import TreeDecoder
-from codeDotOrg import autoFormat, pseudoCodeToTree
-from trainer.utils import LABEL_TO_IX, NUM_LABELS
-from preprocess import flatten_ast
-
 import numpy as np
 import torch
+import torch.utils.data as data
+
+import trainer
+from trainer.utils import LABEL_TO_IX, NUM_LABELS, IX_TO_LABEL
+from trainer.datasets import ProductionDataset
+from tree_encoder import TreeDecoder
+from codeDotOrg import autoFormat, pseudoCodeToTree
+from preprocess import flatten_ast
 from lstmmodels import FeedbackNN
 from config import TRAINING_PARAMS, DATA_DIR, CHECKPOINT_DIR
 
-clear = lambda: os.system('clear')
+
+def clear(): return os.system('clear')
+
 
 USE_FEEDBACK_NN = True
 
@@ -27,7 +32,7 @@ SPACE = " "
 NEXT = "n"
 PREV = "p"
 FIND_ID = "f"
-SIMPLE_MODE_TOGGLE =  "s"
+SIMPLE_MODE_TOGGLE = "s"
 PROBLEMS = [str(i) for i in range(1, 11)]
 INSERT_RUBRIC_ITEM = "i"
 
@@ -35,10 +40,12 @@ ALL_KEYS = ("", SUBMISSION_LEFT, SUBMISSION_RIGHT, SPACE, CTRLC, ENTER,
             UNENTER, NEXT, PREV, FIND_ID, SIMPLE_MODE_TOGGLE,
             *PROBLEMS, INSERT_RUBRIC_ITEM)
 
+
 def getch():
     ''' Gets a single character from the user. '''
     import termios
     import tty
+
     def _getch():
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
@@ -117,7 +124,8 @@ class GUIState:
         self.simple_mode = not self.simple_mode
 
     def find_id(self, ids):
-        student_id = input("Type in a student id (or Enter for random student): ")
+        student_id = input(
+            "Type in a student id (or Enter for random student): ")
         if len(student_id) != 32 or student_id not in ids:
             student_id = random.choice(ids)
         self.student_id = student_id
@@ -161,7 +169,7 @@ def read_data(problem):
 def get_rubric_input(student_id):
     rubric_numbers = []
     MAX_LINE_LENGTH = 36
-    with open('data/rubric-items.json') as f:
+    with open('../data/rubric-items.json') as f:
         rubric_items: Dict[List[str]] = json.load(f)
         i = 0
         for category in rubric_items:
@@ -192,33 +200,42 @@ def preprocess(data):
         code_list = flatten_ast(ast)
         code_str = ' '.join(code_list)
         programs.append(code_str)
-    programs = np.array(programs)
-    return programs
+    return np.array(programs)
 
 
-def make_prediction(data):
-    checkpoint_path = os.path.join(CHECKPOINT_DIR, 'model_best.pth.tar')  # checkpoint.pth.tar
-    # device = torch.device('cpu')  # no CUDA support for now
+def make_prediction(programs):
+    checkpoint_path = os.path.join(CHECKPOINT_DIR, 'model_best.pth.tar')
+    device = torch.device('cpu')  # no CUDA support for now
 
-    # checkpoint = torch.load(checkpoint_path)
-    # config = checkpoint['config']
+    checkpoint = torch.load(checkpoint_path)
+    config = checkpoint['config']
 
-    # model = FeedbackNN(vocab_size=checkpoint['vocab_size'],
-    #                     num_labels=checkpoint['num_labels'])
-    # model.load_state_dict(checkpoint['state_dict'])  # load trained model
-    # model = model.eval()
+    model = FeedbackNN(vocab_size=checkpoint['vocab_size'],
+                       num_labels=checkpoint['num_labels'])
+    model.load_state_dict(checkpoint['state_dict'])  # load trained model
+    model = model.eval()
 
-    # # reproducibility
-    # torch.manual_seed(config['seed'])
-    # np.random.seed(config['seed'])
+    # reproducibility
+    torch.manual_seed(config['seed'])
+    np.random.seed(config['seed'])
 
-    # with torch.no_grad():
-    #     token_seq = token_seq.to(device)
-    #     token_len = token_len.to(device)
+    real_dataset = ProductionDataset(programs,
+                                     vocab=checkpoint['vocab'],
+                                     max_seq_len=config['max_seq_len'],
+                                     min_occ=config['min_occ'])
+    real_loader = data.DataLoader(real_dataset,
+                                  batch_size=config['batch_size'],
+                                  shuffle=False)
 
-    #     label_out = model(token_seq, token_len)
-    #     pred_npy = torch.round(label_out).detach().numpy()
-    #     print(pred_npy)
+    pred_arr = []
+    with torch.no_grad():
+        for (token_seq, token_len) in real_loader:
+            token_seq = token_seq.to(device)
+            token_len = token_len.to(device)
+            label_out = model(token_seq, token_len)
+            pred_npy = torch.round(label_out).detach().numpy()
+            pred_arr.append(pred_npy)
+    return pred_arr[0]
 
 
 def run_gui(problems=(1, )):
@@ -228,7 +245,9 @@ def run_gui(problems=(1, )):
 
     source_data, activity_data, ids, rubric_data = data[problems[0]]
     student_id = random.choice(ids)
-    state = GUIState(student_id=student_id, history=[student_id], curr_problem=problems[0])
+    state = GUIState(student_id=student_id,
+                     history=[student_id],
+                     curr_problem=problems[0])
 
     prev_problem = problems[0]
 
@@ -241,7 +260,8 @@ def run_gui(problems=(1, )):
 
         print("Student id:", state.student_id)
         if state.student_id in activity_data:
-            student_submissions = [source_data[str(program_id)] for program_id, _ in activity_data[state.student_id]]
+            student_submissions = \
+                [source_data[str(program_id)] for program_id, _ in activity_data[state.student_id]]
             num_submissions = len(student_submissions)
             problem = student_submissions[state.curr_index]
             program_id, timestamp = activity_data[state.student_id][state.curr_index]
@@ -261,20 +281,28 @@ def run_gui(problems=(1, )):
             cleaned_program = program_tree.replace('\n', '').replace(' ', '')
             if USE_FEEDBACK_NN:
                 data = preprocess(student_submissions)
-                make_prediction(data)
+                preds = make_prediction(data)
+                if not preds[state.curr_index].any():
+                    print("   Submission looks good!")
+                else:
+                    for index in range(len(preds[state.curr_index])):
+                        if preds[state.curr_index][index] == 1:
+                            print('   ', IX_TO_LABEL[index])
 
             else:
                 if cleaned_program in rubric_data:
                     if len(rubric_data[cleaned_program]) == 0:
-                        print("Submission looks good!")
-                    for item in rubric_data[cleaned_program]:
-                        print('   ', item)
+                        print("   Submission looks good!")
+                    else:
+                        for item in rubric_data[cleaned_program]:
+                            print('   ', item)
                 else:
                     print("\nNo rubric items found.\n")
 
         else:
             print(f"\nStudent had no submission for Problem {state.curr_problem}.\n")
 
+        print()
         with open('../data/student-rubric.json') as f:
             student_data = json.load(f)
             if state.student_id in student_data:

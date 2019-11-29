@@ -27,12 +27,12 @@ def train_pipeline(model_class, train_data_path, val_data_path, test_data_path, 
         os.makedirs(config['out_dir'])
 
     # load the dataset! this might be new for you guys but usually, we wrap
-    # data into Dataset classes. 
-    train_dataset = RubricDataset(train_data_path, NUM_LABELS, vocab=None, 
+    # data into Dataset classes.
+    train_dataset = RubricDataset(train_data_path, NUM_LABELS, vocab=None,
                                   max_seq_len=config['max_seq_len'], min_occ=config['min_occ'])
-    val_dataset = RubricDataset(val_data_path, NUM_LABELS, vocab=train_dataset.vocab, 
+    val_dataset = RubricDataset(val_data_path, NUM_LABELS, vocab=train_dataset.vocab,
                                 max_seq_len=config['max_seq_len'], min_occ=config['min_occ'])
-    test_dataset = RubricDataset(test_data_path, NUM_LABELS, vocab=train_dataset.vocab, 
+    test_dataset = RubricDataset(test_data_path, NUM_LABELS, vocab=train_dataset.vocab,
                                  max_seq_len=config['max_seq_len'], min_occ=config['min_occ'])
 
     # We use a Loader that wraps around a Dataset class to return minibatches...
@@ -43,7 +43,7 @@ def train_pipeline(model_class, train_data_path, val_data_path, test_data_path, 
     test_loader = data.DataLoader(test_dataset, batch_size=config['batch_size'], shuffle=False)
 
     # this instantiates our model
-    model = model_class(vocab_size=train_dataset.vocab_size, 
+    model = model_class(vocab_size=train_dataset.vocab_size,
                         num_labels=NUM_LABELS)
     model = model.to(device)
     # initialize our optimizer
@@ -96,7 +96,7 @@ def train_pipeline(model_class, train_data_path, val_data_path, test_data_path, 
 
         print('====> Epoch: {}\tLoss: {:.4f}\tAccuracy: {:.4f}\tF1: {:.4f}'.format(
             epoch, loss_meter.avg, acc, f1))
-        
+
         return loss_meter.avg, acc, f1
 
 
@@ -134,7 +134,7 @@ def train_pipeline(model_class, train_data_path, val_data_path, test_data_path, 
 
         print('====> {} Epoch: {}\tLoss: {:.4f}\tAccuracy: {:.4f}\tF1: {:.4f}'.format(
             name, epoch, loss_meter.avg, acc, f1))
-        
+
         return loss_meter.avg, acc, f1
 
 
@@ -153,9 +153,9 @@ def train_pipeline(model_class, train_data_path, val_data_path, test_data_path, 
         train_loss, train_acc, train_f1 = train(epoch)
         # we have a validation set usually to pick the best model
         val_loss, val_acc, val_f1 = test(epoch, val_loader, name='Val')
-        # the test set is whats actually reported 
+        # the test set is whats actually reported
         test_loss, test_acc, test_f1 = test(epoch, test_loader, name='Test')
-        
+
         track_train_loss[epoch - 1] = train_loss
         track_val_loss[epoch - 1] = val_loss
         track_test_loss[epoch - 1] = test_loss
@@ -177,7 +177,7 @@ def train_pipeline(model_class, train_data_path, val_data_path, test_data_path, 
             'vocab_size': train_dataset.vocab_size,
             'num_labels': NUM_LABELS,
         }, is_best, folder=config['out_dir'])
-        
+
         np.save(os.path.join(config['out_dir'], 'train_loss.npy'), track_train_loss)
         np.save(os.path.join(config['out_dir'], 'val_loss.npy'), track_val_loss)
         np.save(os.path.join(config['out_dir'], 'test_loss.npy'), track_test_loss)
@@ -195,7 +195,7 @@ def transfer_pipeline(model_class, checkpoint_path, real_data_path):
     checkpoint = torch.load(checkpoint_path)
     config = checkpoint['config']
 
-    model = model_class(vocab_size=checkpoint['vocab_size'], 
+    model = model_class(vocab_size=checkpoint['vocab_size'],
                         num_labels=checkpoint['num_labels'])
     model.load_state_dict(checkpoint['state_dict'])  # load trained model
     model = model.eval()
@@ -204,7 +204,7 @@ def transfer_pipeline(model_class, checkpoint_path, real_data_path):
     torch.manual_seed(config['seed'])
     np.random.seed(config['seed'])
 
-    real_dataset = TransferDataset(real_data_path, NUM_LABELS, vocab=checkpoint['vocab'], 
+    real_dataset = TransferDataset(real_data_path, NUM_LABELS, vocab=checkpoint['vocab'],
                                     max_seq_len=config['max_seq_len'], min_occ=config['min_occ'])
     real_loader = data.DataLoader(real_dataset, batch_size=config['batch_size'], shuffle=False)
 

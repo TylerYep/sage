@@ -10,6 +10,16 @@ Run `python data_loader.py` to convert the data to json.
 
 Then, run `python explore.py` to examine specific data examples.
 
+## Grader
+Run `python sample.py` to get the training data.
+
+Run `python preprocess.py [data_path_here.pkl]` to convert the data.
+
+Run `python train.py` to train the model.
+
+Then, run `python explore.py` to examine specific data examples.
+
+
 # TODO
 1. Visualizing this data somehow (cluster neighbors).
 2. Order by number of submissions.

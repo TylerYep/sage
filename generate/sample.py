@@ -14,7 +14,7 @@ from tree_encoder import TreeDecoder
 
 CURR_PROBLEM = 1
 GRAMMAR_PATH = f'grammars/p{CURR_PROBLEM}'
-MAX = 50000
+MAX = 60000
 REPETITIONS = 3
 
 def createDataList(sampler, source_data_contains, count_data_map):

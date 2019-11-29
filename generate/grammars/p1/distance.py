@@ -4,7 +4,7 @@ class Distance(Decision):
 
     def registerChoices(self):
         distances = {str(i): (10 if i % 25 == 0 else 1) for i in range(0, 150, 5)}
-        distances['50'] = 60
+        distances['50'] = 80
         for s in ('1', '16', '17'):
             distances[s] = 1
         self.addChoice('distance', distances)
