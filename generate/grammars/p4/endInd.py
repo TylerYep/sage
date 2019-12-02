@@ -4,12 +4,14 @@ class EndInd(Decision):
 
     def registerChoices(self):
         self.addChoice('endInd', {
-            '300': 50,
+            '300': 70,
             '150': 20,
             '315': 10,
-            '15': 5,
-            '200': 5,
-            '???': 5
+            '15': 20,
+            '200': 10,
+            '???': 5,
+            '500': 1,
+            '400': 1
         })
 
     def updateRubric(self):

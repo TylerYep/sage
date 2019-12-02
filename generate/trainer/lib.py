@@ -178,15 +178,15 @@ def train_pipeline(model_class, train_data_path, val_data_path, test_data_path, 
             'num_labels': NUM_LABELS,
         }, is_best, folder=config['out_dir'])
 
-        np.save(os.path.join(config['out_dir'], 'train_loss.npy'), track_train_loss)
-        np.save(os.path.join(config['out_dir'], 'val_loss.npy'), track_val_loss)
-        np.save(os.path.join(config['out_dir'], 'test_loss.npy'), track_test_loss)
-        np.save(os.path.join(config['out_dir'], 'train_acc.npy'), track_train_acc)
-        np.save(os.path.join(config['out_dir'], 'val_acc.npy'), track_val_acc)
-        np.save(os.path.join(config['out_dir'], 'test_acc.npy'), track_test_acc)
-        np.save(os.path.join(config['out_dir'], 'train_f1.npy'), track_train_f1)
-        np.save(os.path.join(config['out_dir'], 'val_f1.npy'), track_val_f1)
-        np.save(os.path.join(config['out_dir'], 'test_f1.npy'), track_test_f1)
+        # np.save(os.path.join(config['out_dir'], 'train_loss.npy'), track_train_loss)
+        # np.save(os.path.join(config['out_dir'], 'val_loss.npy'), track_val_loss)
+        # np.save(os.path.join(config['out_dir'], 'test_loss.npy'), track_test_loss)
+        # np.save(os.path.join(config['out_dir'], 'train_acc.npy'), track_train_acc)
+        # np.save(os.path.join(config['out_dir'], 'val_acc.npy'), track_val_acc)
+        # np.save(os.path.join(config['out_dir'], 'test_acc.npy'), track_test_acc)
+        # np.save(os.path.join(config['out_dir'], 'train_f1.npy'), track_train_f1)
+        # np.save(os.path.join(config['out_dir'], 'val_f1.npy'), track_val_f1)
+        # np.save(os.path.join(config['out_dir'], 'test_f1.npy'), track_test_f1)
 
 
 def transfer_pipeline(model_class, checkpoint_path, real_data_path):

@@ -9,46 +9,47 @@ import numpy as np
 
 from collections import Counter
 from collections import defaultdict, OrderedDict
+# from ..config import CURR_PROBLEM
 
 import torch
 
 # map from integers to feedback labels
+# if CURR_PROBLEM == 1:
+# LABELS = [
+#     'noCode',
+#     'missingRepeat',
+#     'triangle-wrongNumSides',
+#     'triangle-tooManyActions',
+#     'triangle-wrongMoveTurnOrder',
+#     'side-forgotTurn',
+#     'side-forgotMove',
+#     'move-wrongAmount',
+#     'turn-rightLeftConfusion',
+#     'turn-wrongAmount',
+# ]
+# elif CURR_PROBLEM == 4:
 LABELS = [
-    ### Problem 1 ###
-    'noCode',
-    'missingRepeat',
-    'triangle-wrongNumSides',
-    'triangle-armsLength',
-    'triangle-wrongMoveTurnOrder',
+    'no-code',
+    'shapeLoop-none',
+    'square-none',
+    'side-none',
+    'shapeLoopHeader-missingValue',
+    'shapeLoopHeader-wrongOrder',
+    'shapeLoopHeader-wrongDelta',
+    'shapeLoopHeader-wrongEnd',
+    'shapeLoopHeader-wrongStart',
+    'square-armsLength',
+    'square-unrolled',
+    'square-wrongNumSides',
     'side-forgotLeft',
     'side-forgotMove',
-    'move-wrongAmount',
-    'turn-rightLeftConfusion',
+    'side-wrongMoveLeftOrder',
+    'side-armsLength',
     'turn-wrongAmount',
-    ### Problem 1 ###
-
-
-    ### Problem 4 ###
-    # 'shapeLoop-none',
-    # 'square-none',
-    # 'side-none',
-    # 'shapeLoopHeader-missingValue',
-    # 'shapeLoopHeader-wrongOrder',
-    # 'shapeLoopHeader-wrongDelta',
-    # 'shapeLoopHeader-wrongEnd',
-    # 'shapeLoopHeader-wrongStart',
-    # 'square-armsLength',
-    # 'square-unrolled',
-    # 'square-wrongNumSides',
-    # 'side-forgotLeft',
-    # 'side-forgotMove',
-    # 'side-wrongMoveLeftOrder',
-    # 'side-armsLength',
-    # 'turn-wrongAmount',
-    # 'turn-rightLeftConfusion',
-    # 'move-wrongAmount',
-    ### Problem 4 ###
+    'turn-rightLeftConfusion',
+    'move-wrongAmount',
 ]
+
 IX_TO_LABEL = {i: label for i, label in enumerate(LABELS)}
 LABEL_TO_IX = dict([[v,k] for k,v in IX_TO_LABEL.items()])
 NUM_LABELS = len(IX_TO_LABEL)

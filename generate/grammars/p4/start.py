@@ -40,8 +40,6 @@ class Start(Decision):
                 if self.getChoice('mixedUpOrder') == 'wrongOrder':
                     self.turnOnRubric('shapeLoopHeader-wrongOrder')
 
-
-
     def render(self):
         if self.getChoice('codeOrNo') == 'noCode':
             return ''
@@ -54,6 +52,12 @@ class Start(Decision):
                 }}
                 '''
             if self.getChoice('forLoopVars') == 'none':
+                if self.getChoice('sideOrSquare') == 'side':
+                    return '''
+                    For(???, ???, ???) {{
+                        {InnerCode}
+                    }}
+                    '''
                 return '''
                 For(???, ???, ???) {{
                    {CreateSquare}
@@ -65,6 +69,6 @@ class Start(Decision):
             }}
             '''
 
-        if self.getChoice('sideOrSquare') =='side':
-            return '{DrawSide}'
+        if self.getChoice('sideOrSquare') == 'side':
+            return '{InnerCode}'
         return '{CreateSquare}'

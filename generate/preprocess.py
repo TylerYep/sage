@@ -5,7 +5,7 @@ from codeDotOrg import pseudoCodeToTree
 from trainer.utils import OPEN_BRACKET, END_BRACKET
 from trainer.utils import train_test_split
 from trainer.utils import LABEL_TO_IX, NUM_LABELS
-from config import DATA_DIR
+from config import DATA_DIR, CURR_PROBLEM
 
 
 def flatten_ast(ast):
@@ -31,8 +31,9 @@ def main():
     )
     args = parser.parse_args()
 
-    with open(os.path.join(DATA_DIR, 'train_data.pickle'), 'rb') as fp:
-        print('DATA_DIR is accessible.')
+    if not os.path.isdir(DATA_DIR):
+        os.makedirs(DATA_DIR)
+    print('DATA_DIR is accessible.')
 
     with open(args.raw_data_path, 'rb') as fp:
         data = pickle.load(fp)
@@ -63,13 +64,13 @@ def main():
     val_data = {'program': val_programs, 'label': val_labels}
     test_data = {'program': test_programs, 'label': test_labels}
 
-    with open(os.path.join(DATA_DIR, 'train_data.pickle'), 'wb') as fp:
+    with open(os.path.join(DATA_DIR, f'train_data_{CURR_PROBLEM}.pickle'), 'wb') as fp:
         pickle.dump(train_data, fp)
 
-    with open(os.path.join(DATA_DIR, 'val_data.pickle'), 'wb') as fp:
+    with open(os.path.join(DATA_DIR, f'val_data_{CURR_PROBLEM}.pickle'), 'wb') as fp:
         pickle.dump(val_data, fp)
 
-    with open(os.path.join(DATA_DIR, 'test_data.pickle'), 'wb') as fp:
+    with open(os.path.join(DATA_DIR, f'test_data_{CURR_PROBLEM}.pickle'), 'wb') as fp:
         pickle.dump(test_data, fp)
 
     # process the real student data

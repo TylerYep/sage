@@ -7,13 +7,13 @@ class Repeat(Decision):
 
     def registerChoices(self):
         self.addChoice('times', {
+            '???': 5,
             '0' : 30,
             '1': 40,
             '2' : 10,
             '3' : 40,
             '4': 10,
             '5': 10,
-            '???': 5,
             '50': 1
         })
 

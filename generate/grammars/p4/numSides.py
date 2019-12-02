@@ -10,7 +10,12 @@ class NumSides(Decision):
             '3': 40,
             '4' : 70,
             '5': 40,
-            '20': 10
+            '6': 1,
+            '10': 5,
+            '12': 2,
+            '15': 5,
+            '20': 10,
+            'Counter': 1
         })
 
     def updateRubric(self):

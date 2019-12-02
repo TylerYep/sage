@@ -235,7 +235,7 @@ def make_prediction(programs):
     return pred_arr[0]
 
 
-def run_gui(problems=(1, )):
+def run_gui(problems=(4, )):
     data: Dict[Tuple] = {}
     for num in problems:
         data[num] = read_data(num)

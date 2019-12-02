@@ -9,7 +9,7 @@ class CreateSquare(Decision):
         })
 
         self.addChoice('squareUsesForLoop', {
-            'usesLoopForSquare': 40,
+            'usesLoopForSquare': 80,
             'noLoopForSquare': 20
         })
 
@@ -32,17 +32,17 @@ class CreateSquare(Decision):
         if makesSquare == 'hasSquare':
             if squareForLoop == 'noLoopForSquare':
                 return '''
-                {DrawSide}
-                {DrawSide}
-                {DrawSide}
-                {DrawSide}
+                {InnerCode}
+                {InnerCode}
+                {InnerCode}
+                {InnerCode}
                 '''
             else:
                 return '''
                     Repeat({NumSides}) {{
-                        {DrawSide}
+                        {InnerCode}
                     }}
                 '''
         if randomOrOneSide == 'oneSide':
-            return '{DrawSide}'
-        return '{ExtraCode}'
+            return '{InnerCode}'
+        return '{InnerCode}'

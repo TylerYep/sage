@@ -16,10 +16,6 @@ class InnerCode(Decision):
             'move': 50,
             'turn' : 50
         })
-        self.addChoice('includesRandomExtra', {
-            'hasExtraAction': 10,
-            'reusesSameActions': 70
-        })
         self.addChoice('mixedUpOrder', {
             'rightOrder': 80,
             'wrongOrder': 20
@@ -28,24 +24,18 @@ class InnerCode(Decision):
             'oneLine': 50,
             'twoLines': 50,
             'threeLines': 30,
-            'fourLines' : 10,
-            'fiveLines': 20,
             'none': 20
         })
 
     def updateRubric(self):
-        if self.getChoice('pattern') in ('threeLines', 'fourLines'):
-            self.turnOnRubric('triangle-tooManyActions')
+        if self.getChoice('pattern') == 'threeLines':
+            self.turnOnRubric('side-armsLength')
 
-        elif self.getChoice('pattern') == 'fiveLines':
-            if self.hasChoice('hasRepeat') and self.getChoice('hasRepeat') == 'noRepeat':
-                self.turnOnRubric('triangle-tooManyActions')
-
-        elif self.getChoice('mixedUpOrder') == 'wrongOrder':
-            self.turnOnRubric('triangle-wrongMoveTurnOrder')
+        if self.getChoice('mixedUpOrder') == 'wrongOrder':
+            self.turnOnRubric('side-wrongMoveLeftOrder')
 
         elif self.getChoice('turnOrMove') == 'move' and self.getChoice('pattern') == 'oneLine':
-            self.turnOnRubric('side-forgotTurn')
+            self.turnOnRubric('side-forgotLeft')
 
         elif self.getChoice('turnOrMove') == 'move' and self.getChoice('pattern') == 'oneLine':
             self.turnOnRubric('side-forgotMove')
@@ -76,14 +66,6 @@ class InnerCode(Decision):
         a, b = order
 
         if self.getChoice('pattern') == 'threeLines':
-            if self.getChoice('includesRandomExtra') == 'reusesSameActions':
-                return a + b + a
             return a + b + extra1
-
-        if self.getChoice('pattern') == 'fourLines':
-            return a + b + a + b
-
-        if self.getChoice('pattern') == 'fiveLines':
-            return a + b + a + b + a
 
         return ''

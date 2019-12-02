@@ -3,23 +3,12 @@ from ideaToText import Decision
 class Distance(Decision):
 
     def registerChoices(self):
-        self.addChoice('distance', {
-            'Counter': 50,
-            '1': 10,
-            '5': 5,
-            '10': 10,
-            '15': 10,
-            '17': 1,
-            '20': 10,
-            '25': 5,
-            '30': 1,
-            '40': 1,
-            '50': 10,
-            '60': 10,
-            '90': 10,
-            '100': 10,
-            '300': 10
-        })
+        distances = {str(i): 5 for i in range(0, 100, 10)}
+        distances['Counter'] = 80
+        distances['100'] = 80
+        for s in ('1', '5', '15', '17', '25', '300'):
+            distances[s] = 5
+        self.addChoice('distance', distances)
 
     def updateRubric(self):
         if self.getChoice('distance') != 'Counter':
