@@ -20,7 +20,7 @@ class NumSides(Decision):
         })
 
     def updateRubric(self):
-        if self.getChoice('numSides') != '4':
+        if self.getChoice('numSides') != '3':
             self.turnOnRubric('triangle-wrongNumSides')
 
     def render(self):

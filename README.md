@@ -16,11 +16,11 @@ Then, run `python explore.py` to examine specific data examples.
 ## Autograder
 Jump into generate with `cd generate/`.
 
-Run `python sample.py` to get training data. This will also give the top 50 submissions in the source data that were not represented in your grammar. Fix your grammar!
+Run `python sample.py [problem_num]` to get training data. This will also give the top 50 submissions in the source data that were not represented in your grammar. Fix your grammar!
 
-Run `python preprocess.py [data_path_here.pkl]` to convert/split the data into train/val/test.
+Run `python preprocess.py [problem_num] [data_path_here.pkl]` to convert/split the data into train/val/test.
 
-Run `python train.py` to train the model.
+Run `python train.py [problem_num]` to train the model.
 
 Run `python explore.py` to examine specific data examples.
 
@@ -30,10 +30,19 @@ Run `python explore.py` to examine specific data examples.
 2. Order by number of submissions?
 
 ## Milestones
-- Write a grammar for p1.
+- Wrote a grammar for p1-p4.
 - Created data exploration tool.
 - Create visualizer for rubric sampled AI.
 - Anomaly Detection.
+- Ability Estimation.
+
+P1 - 82%
+P2 - 99%
+P3 - 51%
+P4 - 56%
+P9 -
+
+
 
 
 # Project Info

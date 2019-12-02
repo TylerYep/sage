@@ -6,7 +6,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 import torch.nn.utils.rnn as rnn_utils
 
-from trainer.utils import NUM_LABELS, IX_TO_LABEL
+# from trainer.utils import NUM_LABELS, IX_TO_LABEL
 
 
 class FeedbackNN(nn.Module):

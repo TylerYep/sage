@@ -9,10 +9,10 @@ import torch
 import torch.utils.data as data
 
 import trainer
-from trainer.utils import LABEL_TO_IX, NUM_LABELS, IX_TO_LABEL
+from trainer.labels import get_label_to_ix
 from trainer.datasets import ProductionDataset
 from tree_encoder import TreeDecoder
-from codeDotOrg import autoFormat, pseudoCodeToTree
+from codeDotOrg import autoFormat, pseudoCodeToTree, remove_whitespace
 from preprocess import flatten_ast
 from lstmmodels import FeedbackNN
 
@@ -134,13 +134,14 @@ class GUIState:
 
 def show_progress_bar(state, num_submissions):
     LENGTH = 100
-    print("|", end='')
+    progress_bar = '|'
     for i in range(num_submissions):
         if i <= state.curr_index:
-            print("=" * (LENGTH // num_submissions), end='')
+            progress_bar += ("=" * (LENGTH // num_submissions))
         else:
-            print("-" * (LENGTH // num_submissions), end='')
-    print("|")
+            progress_bar += ("-" * (LENGTH // num_submissions))
+    progress_bar += "|"
+    print(progress_bar)
 
 
 def read_data(problem):
@@ -249,6 +250,7 @@ def run_gui(problems):
                      curr_problem=problems[0])
 
     prev_problem = problems[0]
+    # prev_student = student_id
 
     while state.action != SPACE:
         os.system('clear')
@@ -277,7 +279,7 @@ def run_gui(problems):
             show_progress_bar(state, num_submissions)
 
             print("Rubric items: ")
-            cleaned_program = program_tree.replace('\n', '').replace(' ', '')
+            cleaned_program = remove_whitespace(program_tree)
             if USE_FEEDBACK_NN:
                 nn_data = preprocess(student_submissions)
                 preds = make_prediction(state.curr_problem, nn_data)
@@ -286,6 +288,7 @@ def run_gui(problems):
                 else:
                     for index in range(len(preds[state.curr_index])):
                         if preds[state.curr_index][index] == 1:
+                            _, IX_TO_LABEL, _ = get_label_to_ix(state.curr_problem)
                             print('   ', IX_TO_LABEL[index])
 
             else:

@@ -21,6 +21,9 @@ def removeColors(tree):
 
     tree.children = newChildren
 
+def remove_whitespace(tree_str):
+    return tree_str.replace('\n', '').replace(' ', '')
+
 
 def autoFormat(tree, remove_set_color=True):
     assert tree.rootName == 'Program'

@@ -10,19 +10,29 @@ import pickle
 import ideaToText
 import argparse
 from pprint import pprint
-from codeDotOrg import autoFormat
+from codeDotOrg import autoFormat, remove_whitespace
 from tree_encoder import TreeDecoder
 
 def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('problem', type=int, help='problem number')
+	parser.add_argument('--all', '-a', help='sample all problems', action='store_true', default=False)
 	args = parser.parse_args()
-	sample(args.problem)
+	if args.all:
+		print("Sampling all problems...")
+		for i in (1,2,3,4):
+			print("Sampling for problem", i)
+			sample(i)
+	elif args.problem == 0:
+		print("Please specify a problem number or use -a to sample all problems.")
+	else:
+		print("Sampling for problem", args.problem)
+		sample(args.problem)
 
 
 def createDataList(problem, source_data_contains, count_data_map):
 	GRAMMAR_PATH = f'grammars/p{problem}'
-	MAX = 100000
+	MAX = 1000 if problem == 2 else 100000
 	REPETITIONS = 3
 
 	uniqueSubs = {}
@@ -51,7 +61,7 @@ def createDataList(problem, source_data_contains, count_data_map):
 		new_data['label'] = sample['rubric']
 		data.append(new_data)
 
-		text = sample['text'].replace('\n', '').replace(' ', '')
+		text = remove_whitespace(sample['text'])
 		if text not in sample_count_map:
 			sample_count_map[text] = 0
 		sample_count_map[text] += 1
@@ -89,7 +99,7 @@ def sample(problem):
 	count_data_map = {}
 	source_data_contains = set() # programs
 	for key in source_data:
-		expr = autoFormat(source_data[key]).replace('\n', '').replace(' ', '')
+		expr = remove_whitespace(autoFormat(source_data[key]))
 		if expr not in source_data_contains:
 			source_data_contains.add(expr)
 			count_data_map[expr] = count_data[key]
