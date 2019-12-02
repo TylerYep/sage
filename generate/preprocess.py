@@ -5,7 +5,7 @@ from codeDotOrg import pseudoCodeToTree
 from trainer.utils import OPEN_BRACKET, END_BRACKET
 from trainer.utils import train_test_split
 from trainer.utils import LABEL_TO_IX, NUM_LABELS
-from config import DATA_DIR, CURR_PROBLEM
+from trainer.config import DATA_DIR, CURR_PROBLEM
 
 
 def flatten_ast(ast):

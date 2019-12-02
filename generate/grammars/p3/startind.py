@@ -4,14 +4,16 @@ class StartInd(Decision):
 
     def registerChoices(self):
         self.addChoice('startInd', {
-            '15': 20,
-            '10': 15,
-            '20': 50,
-            '25': 10,
-            '50': 30,
-            '0': 10,
-            '300': 20,
-            '???': 5
+            '100': 5,
+            '10': 10,
+            '20': 80,
+            '50': 15,
+            '0': 5,
+            '1': 2,
+            '200': 15,
+            '300': 5,
+            '25': 1,
+            '???': 1,
         })
 
     def updateRubric(self):

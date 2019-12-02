@@ -18,13 +18,13 @@ class DrawSide(Decision):
         })
         self.addChoice('mixedUpOrder', {
             'rightOrder': 80,
-            'wrongOrder': 20
+            'wrongOrder': 10
         })
         self.addChoice('pattern', {
-            'oneLine': 50,
-            'twoLines': 50,
-            'threeLines': 30,
-            'none': 20
+            'oneLine': 10,
+            'twoLines': 100,
+            'threeLines': 5,
+            'none': 10
         })
 
     def updateRubric(self):

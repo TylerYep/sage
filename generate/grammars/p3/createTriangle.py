@@ -20,9 +20,9 @@ class CreateTriangle(Decision):
 
     def updateRubric(self):
         if self.getChoice('makesTriangle') == 'noTriangle':
-            self.turnOnRubric('Triangle-none')
+            self.turnOnRubric('triangle-none')
         elif self.getChoice('triangleUsesForLoop') == 'noLoopForTriangle':
-            self.turnOnRubric('Triangle-unrolled')
+            self.turnOnRubric('triangle-unrolled')
 
     def render(self):
         triangleForLoop = self.getChoice('triangleUsesForLoop')

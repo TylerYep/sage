@@ -1,6 +1,6 @@
 import os
 
-CURR_PROBLEM = 1
+CURR_PROBLEM = 3
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 CHECKPOINT_DIR = os.path.join(os.path.dirname(__file__), 'checkpoints', f'cp{CURR_PROBLEM}')
 

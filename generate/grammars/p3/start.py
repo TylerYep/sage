@@ -14,16 +14,12 @@ class Start(Decision):
             'hasOuterForLoop': 80,
             'noOuterForLoop': 20
         })
-        self.addChoice('mixedUpOrder', {
-            'rightOrder': 80,
-            'wrongOrder': 20
-        })
         self.addChoice('sideOrTriangle', {
-            'side': 80,
-            'triangle': 20
+            'side': 60,
+            'triangle': 40
         })
         self.addChoice('forLoopVars', {
-            'none': 20,
+            'none': 30,
             'some': 95
         })
 
@@ -33,35 +29,27 @@ class Start(Decision):
         else:
             if self.getChoice('outerForLoop') == 'noOuterForLoop':
                 self.turnOnRubric('shapeLoop-none')
-                if self.getChoice('mixedUpOrder') == 'wrongOrder':
-                    self.turnOnRubric('shapeLoopHeader-wrongOrder')
+                if self.hasChoice('startInd') \
+                    and self.hasChoice('endInd') \
+                    and self.hasChoice('increment'):
+
+                    if self.getChoice('startInd') >= self.hasChoice('endInd'):
+                        self.turnOnRubric('shapeLoopHeader-wrongOrder')
 
     def render(self):
         if self.getChoice('codeOrNo') == 'noCode':
             return ''
 
         if self.getChoice('outerForLoop') == 'hasOuterForLoop':
-            if self.getChoice('mixedUpOrder') == 'rightOrder':
-                return '''
-                For({StartInd}, {EndInd}, {Increment}) {{
-                   {CreateTriangle}
-                }}
-                '''
             if self.getChoice('forLoopVars') == 'none':
-                if self.getChoice('sideOrTriangle') == 'side':
-                    return '''
-                    For(???, ???, ???) {{
-                        {DrawSide}
-                    }}
-                    '''
                 return '''
                 For(???, ???, ???) {{
                    {CreateTriangle}
                 }}
                 '''
             return '''
-            For({StartInd}, {Increment}, {EndInd}) {{
-               {CreateTriangle}
+            For({StartInd}, {EndInd}, {Increment}) {{
+                {CreateTriangle}
             }}
             '''
 

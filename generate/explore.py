@@ -15,9 +15,8 @@ from tree_encoder import TreeDecoder
 from codeDotOrg import autoFormat, pseudoCodeToTree
 from preprocess import flatten_ast
 from lstmmodels import FeedbackNN
-from config import TRAINING_PARAMS, DATA_DIR, CHECKPOINT_DIR
 
-CURR_PROBLEMS = (1, 2, 4)
+CURR_PROBLEMS = (1, 2, 3, 4)
 USE_FEEDBACK_NN = True
 
 SUBMISSION_LEFT = "["

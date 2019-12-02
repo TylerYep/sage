@@ -9,10 +9,11 @@ import numpy as np
 
 from collections import Counter
 from collections import defaultdict, OrderedDict
-from .labels import LABELS
+from .labels import get_labels
 
 import torch
 
+LABELS = get_labels(3)
 IX_TO_LABEL = {i: label for i, label in enumerate(LABELS)}
 LABEL_TO_IX = dict([[v,k] for k,v in IX_TO_LABEL.items()])
 NUM_LABELS = len(IX_TO_LABEL)

@@ -4,9 +4,9 @@ class Degrees(Decision):
 
     def registerChoices(self):
         self.addChoice('degrees', {
-            '45' : 20,
-            '90': 20,
-            '120': 80,
+            '45' : 10,
+            '90': 10,
+            '120': 90,
             '180' : 10,
             '270' : 10,
             '100': 10,

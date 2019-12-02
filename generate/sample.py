@@ -8,16 +8,23 @@ import json
 import random
 import pickle
 import ideaToText
+import argparse
 from pprint import pprint
 from codeDotOrg import autoFormat
 from tree_encoder import TreeDecoder
-from config import CURR_PROBLEM
 
-GRAMMAR_PATH = f'grammars/p{CURR_PROBLEM}'
-MAX = 200000
-REPETITIONS = 3
+def main():
+	parser = argparse.ArgumentParser()
+	parser.add_argument('problem', type=int, help='problem number')
+	args = parser.parse_args()
+	sample(args.problem)
 
-def createDataList(source_data_contains, count_data_map):
+
+def createDataList(problem, source_data_contains, count_data_map):
+	GRAMMAR_PATH = f'grammars/p{problem}'
+	MAX = 100000
+	REPETITIONS = 3
+
 	uniqueSubs = {}
 	num_sampled, percent_complete, useless_counter = 0, 0, 0
 	data = []
@@ -58,7 +65,7 @@ def createDataList(source_data_contains, count_data_map):
 				useless_counter += 1
 		num_sampled += 1
 
-	with open(f'generated/data-{CURR_PROBLEM}.pkl', 'wb') as f:
+	with open(f'generated/data-{problem}.pkl', 'wb') as f:
 		pickle.dump(data, f)
 
 	print('Out-of-distribution Datapoints: ',
@@ -87,7 +94,8 @@ def sample(problem):
 			source_data_contains.add(expr)
 			count_data_map[expr] = count_data[key]
 
-	uniqueSubs = createDataList(source_data_contains,
+	uniqueSubs = createDataList(problem,
+								source_data_contains,
 								count_data_map)
 	with open(f'generated/uniqueSubs-{problem}.json', 'w') as f:
 		json.dump(uniqueSubs, f, indent=2)
@@ -111,4 +119,4 @@ def compute_l1_dist(sample_count_map, count_data_map):
 
 
 if __name__ == '__main__':
-	sample(CURR_PROBLEM)
+	main()

@@ -4,7 +4,7 @@ import os
 import pickle
 
 from lstmmodels import FeedbackNN
-from config import TRAINING_PARAMS, DATA_DIR, CURR_PROBLEM
+from trainer.config import TRAINING_PARAMS, DATA_DIR, CURR_PROBLEM
 
 import trainer
 
