@@ -9,46 +9,9 @@ import numpy as np
 
 from collections import Counter
 from collections import defaultdict, OrderedDict
-# from ..config import CURR_PROBLEM
+from .labels import LABELS
 
 import torch
-
-# map from integers to feedback labels
-# if CURR_PROBLEM == 1:
-# LABELS = [
-#     'noCode',
-#     'missingRepeat',
-#     'triangle-wrongNumSides',
-#     'triangle-tooManyActions',
-#     'triangle-wrongMoveTurnOrder',
-#     'side-forgotTurn',
-#     'side-forgotMove',
-#     'move-wrongAmount',
-#     'turn-rightLeftConfusion',
-#     'turn-wrongAmount',
-# ]
-# elif CURR_PROBLEM == 4:
-LABELS = [
-    'no-code',
-    'shapeLoop-none',
-    'square-none',
-    'side-none',
-    'move-wrongAmount',
-    'shapeLoopHeader-missingValue',
-    'shapeLoopHeader-wrongOrder',
-    'shapeLoopHeader-wrongDelta',
-    'shapeLoopHeader-wrongEnd',
-    'shapeLoopHeader-wrongStart',
-    'square-armsLength',
-    'square-unrolled',
-    'square-wrongNumSides',
-    'side-forgotLeft',
-    'side-forgotMove',
-    'side-wrongMoveLeftOrder',
-    'side-armsLength',
-    'turn-wrongAmount',
-    'turn-rightLeftConfusion',
-]
 
 IX_TO_LABEL = {i: label for i, label in enumerate(LABELS)}
 LABEL_TO_IX = dict([[v,k] for k,v in IX_TO_LABEL.items()])

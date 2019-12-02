@@ -10,23 +10,20 @@ class Start(Decision):
             'code': 100,
             'noCode': 5
         })
-        self.addChoice('hasRepeat', {
-            'yesRepeat': 50,
-            'noRepeat': 50
-        })
 
     def updateRubric(self):
-        if self.getChoice('codeOrNo') == 'code':
-            if self.getChoice('hasRepeat') == 'noRepeat':
-                self.turnOnRubric('missingRepeat')
-        else:
+        if self.getChoice('codeOrNo') != 'code':
             self.turnOnRubric('noCode')
 
     def render(self):
         if self.getChoice('codeOrNo') == 'code':
-            if self.getChoice('hasRepeat') == 'yesRepeat':
-                return '{Repeat}'
-            else:
-                return '{InnerCode}'
-        else:
-            return ''
+            return '''
+            For({Loop}) {{
+                Repeat({NumSides}) {{
+                    Move(Counter)
+                    TurnLeft(120)
+                }}
+            }}
+            '''
+
+        return ''

@@ -17,7 +17,7 @@ from preprocess import flatten_ast
 from lstmmodels import FeedbackNN
 from config import TRAINING_PARAMS, DATA_DIR, CHECKPOINT_DIR
 
-
+CURR_PROBLEMS = (1, 2, 4)
 USE_FEEDBACK_NN = True
 
 SUBMISSION_LEFT = "["
@@ -121,9 +121,10 @@ class GUIState:
         self.simple_mode = not self.simple_mode
 
     def find_id(self, ids):
+        ID_LENGTH = 32
         student_id = input(
             "Type in a student id (or Enter for random student): ")
-        if len(student_id) != 32 or student_id not in ids:
+        if len(student_id) != ID_LENGTH or student_id not in ids:
             student_id = random.choice(ids)
         self.student_id = student_id
 
@@ -191,17 +192,19 @@ def get_rubric_input(student_id):
             json.dump(student_data, f, indent=2)
 
 
-def preprocess(data):
+def preprocess(nn_data):
     programs = []
-    for ast in data:
+    for ast in nn_data:
         code_list = flatten_ast(ast)
         code_str = ' '.join(code_list)
         programs.append(code_str)
     return np.array(programs)
 
 
-def make_prediction(programs):
-    checkpoint_path = os.path.join(CHECKPOINT_DIR, 'model_best.pth.tar')
+def make_prediction(problem, programs):
+    checkpoint_path = os.path.join(os.path.dirname(__file__), 'checkpoints', f'cp{problem}')
+    checkpoint_path = os.path.join(checkpoint_path, 'model_best.pth.tar')
+
     device = torch.device('cpu')  # no CUDA support for now
 
     checkpoint = torch.load(checkpoint_path)
@@ -235,12 +238,12 @@ def make_prediction(programs):
     return pred_arr[0]
 
 
-def run_gui(problems=(4, )):
-    data: Dict[Tuple] = {}
+def run_gui(problems):
+    prob_data: Dict[Tuple] = {}
     for num in problems:
-        data[num] = read_data(num)
+        prob_data[num] = read_data(num)
 
-    source_data, activity_data, ids, rubric_data = data[problems[0]]
+    source_data, activity_data, ids, rubric_data = prob_data[problems[0]]
     student_id = random.choice(ids)
     state = GUIState(student_id=student_id,
                      history=[student_id],
@@ -252,7 +255,7 @@ def run_gui(problems=(4, )):
         os.system('clear')
 
         if state.curr_problem != prev_problem:
-            source_data, activity_data, ids = data[state.curr_problem]
+            source_data, activity_data, ids, rubric_data = prob_data[state.curr_problem]
             prev_problem = state.curr_problem
 
         print("Student id:", state.student_id)
@@ -277,8 +280,8 @@ def run_gui(problems=(4, )):
             print("Rubric items: ")
             cleaned_program = program_tree.replace('\n', '').replace(' ', '')
             if USE_FEEDBACK_NN:
-                data = preprocess(student_submissions)
-                preds = make_prediction(data)
+                nn_data = preprocess(student_submissions)
+                preds = make_prediction(state.curr_problem, nn_data)
                 if not preds[state.curr_index].any():
                     print("   Submission looks good!")
                 else:
@@ -336,7 +339,7 @@ def run_gui(problems=(4, )):
 
 
 if __name__ == '__main__':
-    run_gui()
+    run_gui(CURR_PROBLEMS)
 
     # Problem 1 interesting:
     # 1eb24f31bcd0c1be6b6f1f5a90aeec7b

@@ -18,12 +18,12 @@ class Start(Decision):
             'rightOrder': 80,
             'wrongOrder': 20
         })
-        self.addChoice('sideOrSquare', {
+        self.addChoice('sideOrTriangle', {
             'side': 80,
-            'square': 20
+            'triangle': 20
         })
         self.addChoice('forLoopVars', {
-            'none': 5,
+            'none': 20,
             'some': 95
         })
 
@@ -44,11 +44,11 @@ class Start(Decision):
             if self.getChoice('mixedUpOrder') == 'rightOrder':
                 return '''
                 For({StartInd}, {EndInd}, {Increment}) {{
-                   {CreateSquare}
+                   {CreateTriangle}
                 }}
                 '''
             if self.getChoice('forLoopVars') == 'none':
-                if self.getChoice('sideOrSquare') == 'side':
+                if self.getChoice('sideOrTriangle') == 'side':
                     return '''
                     For(???, ???, ???) {{
                         {DrawSide}
@@ -56,15 +56,15 @@ class Start(Decision):
                     '''
                 return '''
                 For(???, ???, ???) {{
-                   {CreateSquare}
+                   {CreateTriangle}
                 }}
                 '''
             return '''
             For({StartInd}, {Increment}, {EndInd}) {{
-               {CreateSquare}
+               {CreateTriangle}
             }}
             '''
 
-        if self.getChoice('sideOrSquare') == 'side':
+        if self.getChoice('sideOrTriangle') == 'side':
             return '{DrawSide}'
-        return '{CreateSquare}'
+        return '{CreateTriangle}'

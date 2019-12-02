@@ -17,7 +17,7 @@ GRAMMAR_PATH = f'grammars/p{CURR_PROBLEM}'
 MAX = 200000
 REPETITIONS = 3
 
-def createDataList(sampler, source_data_contains, count_data_map):
+def createDataList(source_data_contains, count_data_map):
 	uniqueSubs = {}
 	num_sampled, percent_complete, useless_counter = 0, 0, 0
 	data = []
@@ -25,6 +25,8 @@ def createDataList(sampler, source_data_contains, count_data_map):
 	prev = None
 	no_new_counter = REPETITIONS
 	sample_count_map = {}
+
+	sampler = ideaToText.Sampler(GRAMMAR_PATH)
 	while no_new_counter != 0 and num_sampled < MAX:
 		if num_sampled % 1000 == 0:
 			print('Iter:', num_sampled, 'Unique:', len(uniqueSubs))
@@ -72,7 +74,7 @@ def createDataList(sampler, source_data_contains, count_data_map):
 	return uniqueSubs
 
 
-def sample(problem=CURR_PROBLEM):
+def sample(problem):
 	with open(f'../data/p{problem}/sources-{problem}.json') as source_file:
 		source_data = json.load(source_file, cls=TreeDecoder)
 	with open(f'../data/p{problem}/countMap-{problem}.json') as count_file:
@@ -85,9 +87,7 @@ def sample(problem=CURR_PROBLEM):
 			source_data_contains.add(expr)
 			count_data_map[expr] = count_data[key]
 
-	sampler = ideaToText.Sampler(GRAMMAR_PATH)
-	uniqueSubs = createDataList(sampler,
-								source_data_contains,
+	uniqueSubs = createDataList(source_data_contains,
 								count_data_map)
 	with open(f'generated/uniqueSubs-{problem}.json', 'w') as f:
 		json.dump(uniqueSubs, f, indent=2)
@@ -111,4 +111,4 @@ def compute_l1_dist(sample_count_map, count_data_map):
 
 
 if __name__ == '__main__':
-	sample()
+	sample(CURR_PROBLEM)
