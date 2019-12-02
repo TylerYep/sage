@@ -6,7 +6,7 @@ CHECKPOINT_DIR = os.path.join(os.path.dirname(__file__), 'checkpoints', f'cp{CUR
 
 TRAINING_PARAMS = {
     'batch_size': 100,
-    'epochs': 1,       # number of loops through synthetic data
+    'epochs': 3,       # number of loops through synthetic data
     'lr': 3e-4,         # learning rate
     'seed': 1,
     'max_seq_len': 50,  # maximum number of tokens allowed in a single sequence

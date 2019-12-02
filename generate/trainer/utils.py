@@ -33,6 +33,7 @@ LABELS = [
     'shapeLoop-none',
     'square-none',
     'side-none',
+    'move-wrongAmount',
     'shapeLoopHeader-missingValue',
     'shapeLoopHeader-wrongOrder',
     'shapeLoopHeader-wrongDelta',
@@ -47,7 +48,6 @@ LABELS = [
     'side-armsLength',
     'turn-wrongAmount',
     'turn-rightLeftConfusion',
-    'move-wrongAmount',
 ]
 
 IX_TO_LABEL = {i: label for i, label in enumerate(LABELS)}

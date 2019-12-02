@@ -15,6 +15,7 @@ class NumSides(Decision):
             '12': 2,
             '15': 5,
             '20': 10,
+            '100': 1,
             'Counter': 1
         })
 

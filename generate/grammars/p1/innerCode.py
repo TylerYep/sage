@@ -60,7 +60,6 @@ class InnerCode(Decision):
 
         move = get_action('move')
         turn = get_action('turn')
-        extra1 = get_action(self.getChoice('extra1'))
 
         if self.getChoice('pattern') == 'oneLine':
             return turn if self.getChoice('turnOrMove') == 'turn' else move
@@ -78,6 +77,8 @@ class InnerCode(Decision):
         if self.getChoice('pattern') == 'threeLines':
             if self.getChoice('includesRandomExtra') == 'reusesSameActions':
                 return a + b + a
+                
+            extra1 = get_action(self.getChoice('extra1'))
             return a + b + extra1
 
         if self.getChoice('pattern') == 'fourLines':

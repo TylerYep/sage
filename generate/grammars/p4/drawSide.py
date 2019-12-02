@@ -1,59 +1,71 @@
-from ideaToText import Decision
+import random
 
+from ideaToText import Decision
+from ideaToText import generatorUtils as gu
+
+# "Start" is a special decision which is invoked by the Sampler
+# to generate a single sample.
 class DrawSide(Decision):
 
     def registerChoices(self):
-        self.addChoice('hasCode', {
-            'noCode': 40,
-            'code' : 60
+        self.addChoice('turnOrMove', {
+            'move': 50,
+            'turn' : 50
         })
-        self.addChoice('moveVsTurnFirst', {
-            'moveFirst': 40,
-            'turnFirst': 20
+        self.addChoice('extra1', {
+            'move': 50,
+            'turn' : 50
         })
-
-        self.addChoice('sideExtraCode', {
-            'noExtraCode': 95,
-            'extraCode': 25
+        self.addChoice('mixedUpOrder', {
+            'rightOrder': 80,
+            'wrongOrder': 20
         })
-
-        self.addChoice('hasLeft', {
-            'forgotLeft': 80,
-            'hasLeft': 20
-        })
-
-        self.addChoice('hasMove', {
-            'forgotMove': 80,
-            'hasMove': 50
+        self.addChoice('pattern', {
+            'oneLine': 50,
+            'twoLines': 50,
+            'threeLines': 30,
+            'none': 20
         })
 
     def updateRubric(self):
-        if self.getChoice('hasCode') == 'noCode' \
-            and self.hasChoice('squareUsesForLoop') \
-            and self.getChoice('squareUsesForLoop') == 'usesLoopForSquare':
-            self.turnOnRubric('side-none')
-        else:
-            if self.getChoice('moveVsTurnFirst') == 'turnFirst':
-                self.turnOnRubric('side-wrongMoveLeftOrder')
+        if self.getChoice('pattern') == 'threeLines':
+            self.turnOnRubric('side-armsLength')
 
-            if self.getChoice('sideExtraCode') == 'extraCode':
-                self.turnOnRubric('side-armsLength')
+        if self.getChoice('mixedUpOrder') == 'wrongOrder':
+            self.turnOnRubric('side-wrongMoveLeftOrder')
 
-            if self.getChoice('hasLeft') == 'forgotLeft':
-                self.turnOnRubric('side-forgotLeft')
+        elif self.getChoice('turnOrMove') == 'move' and self.getChoice('pattern') == 'oneLine':
+            self.turnOnRubric('side-forgotLeft')
 
-            if self.getChoice('hasMove') == 'forgotMove':
-                self.turnOnRubric('side-forgotMove')
+        elif self.getChoice('turnOrMove') == 'move' and self.getChoice('pattern') == 'oneLine':
+            self.turnOnRubric('side-forgotMove')
 
     def render(self):
-        if self.getChoice('hasCode') == 'noCode':
+        def get_action(code):
+            if code == 'move':
+                return 'Move({Distance}) '
+            if code == 'turn':
+                return '{Turn} '
             return ''
-        moveVsTurnFirst = self.getChoice('moveVsTurnFirst')
-        extra = '{ExtraCode}' if self.getChoice('sideExtraCode') else ''
-        hasTurn = '{Turn}\n' if self.getChoice('hasLeft') else ''
-        hasMove = 'Move({Distance})\n' if self.getChoice('hasMove') else ''
 
-        if moveVsTurnFirst == 'moveFirst':
-            return hasMove + hasTurn + extra
-        else:
-            return hasTurn + hasMove + extra
+        move = get_action('move')
+        turn = get_action('turn')
+
+        if self.getChoice('pattern') == 'oneLine':
+            return turn if self.getChoice('turnOrMove') == 'turn' else move
+
+        if self.getChoice('pattern') == 'twoLines':
+            if self.getChoice('mixedUpOrder') == 'rightOrder':
+                return move + turn
+            else:
+                return turn + move
+
+        order = [move, turn]
+        random.shuffle(order)
+        a, b = order
+
+        if self.getChoice('pattern') == 'threeLines':
+            extra1 = get_action(self.getChoice('extra1'))
+            return a + b + extra1
+
+        return ''

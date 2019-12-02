@@ -55,7 +55,7 @@ class Start(Decision):
                 if self.getChoice('sideOrSquare') == 'side':
                     return '''
                     For(???, ???, ???) {{
-                        {InnerCode}
+                        {DrawSide}
                     }}
                     '''
                 return '''
@@ -70,5 +70,5 @@ class Start(Decision):
             '''
 
         if self.getChoice('sideOrSquare') == 'side':
-            return '{InnerCode}'
+            return '{DrawSide}'
         return '{CreateSquare}'
