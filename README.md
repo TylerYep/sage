@@ -35,16 +35,40 @@ Run `python explore.py` to examine specific data examples.
 
 ## Milestones
 - Wrote a grammar for p1-p4.
+  - Learned what samples we were missing while we were sampling!
 - Created data exploration tool.
-- Create visualizer for rubric sampled AI.
-- Anomaly Detection.
-- Ability Estimation.
+  - View a submission in its original code form.
+  - Manually inspect student progress.
 
-P1 - 82%
-P2 - 99%
-P3 - 51%
-P4 - 56%
-P9 -
+- Create visualizations for rubric sampled AI.
+
+- Anomaly Detection.
+  - Transition model
+    - Find "breakthrough moments"
+    - Find backtracking moments = "grit"
+  - Bucketed learning
+
+  - Deep Learning
+  - Does amount of learning we arbitrarily calculated correlate with number of submissions later?
+  - Plot final score vs (number of submissions later * time spent)
+
+- Ability Gradient Estimation.
+  - Can you backprop student success on next problem to train transition weights for learning?
+  - Model that predicts future success (number of submissions on next problem) based on calculated score?
+
+
+- P1 - 82%
+- P2 - 99%
+- P3 - 52%
+- P4 - 56%
+- P9 -
+
+
+  - nearest neighbors
+
+
+
+Students who learned most?
 
 
 

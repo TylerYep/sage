@@ -4,56 +4,18 @@ import sys
 import json
 import random
 import pickle
-import numpy as np
-import torch
-import torch.utils.data as data
 
 import trainer
-from trainer.labels import get_label_to_ix, get_labels
-from trainer.datasets import ProductionDataset
+from trainer.labels import get_label_to_ix
 from tree_encoder import TreeDecoder
 from codeDotOrg import autoFormat, pseudoCodeToTree, remove_whitespace
-from preprocess import flatten_ast
-from lstmmodels import FeedbackNN
 from gui import GUIState
+from predict import preprocess, make_prediction
+from transition import TScores
 
 CURR_PROBLEMS = (1, 2, 3, 4)
 USE_FEEDBACK_NN = True
 SPACE = " "
-
-class TScores:
-    def __init__(self, state):
-        self.state = state
-        self.label_weights = {i: [1 for j in range(len(get_labels(i)))] for i in range(1, 5)}
-        self.scores = [[0, -1], [1, 0]] # scores[a][b] means score for transition from a to b
-
-    def getCurTransitionScores(self, rubric_data):
-        output = ''
-        tScores = []
-        curStudent = self.state.curr_student
-        nn_data = preprocess(self.state.submissions)
-        preds = make_prediction(self.state.curr_problem, nn_data)
-        if len(self.state.submissions) == 1:
-            print('No Transition Scores (Only 1 Submission)')
-        else:
-            print('Transition Scores\n')
-            totalScore = 0
-            for i in range(len(self.state.submissions) - 1):
-                rub1 = preds[i]
-                rub2 = preds[i + 1]
-                tList = [self.scores[int(rub1[i])][int(rub2[i])] for i in range(len(rub1))]
-                score = 0
-                for j in range(len(tList)):
-                    score += (self.label_weights[self.state.curr_problem][j] * tList[j])
-                print(f'Sub {i+1} to Sub {i+2} with transition learning score of {score}: ', tList)
-                totalScore += score
-            print(f'\nFinal Learning Score: {totalScore}')
-            print(f'\nEnded with {int(sum(preds[len(self.state.submissions) - 1]))}',
-                  f'out of {len(preds[len(self.state.submissions) - 1])} rubric items')
-
-    def updateWeights(self, problem, weights):
-        if problem in self.label_weights and len(weights) == len(self.label_weights[problem]):
-            self.label_weights[problem] = weights
 
 
 def show_progress_bar(state, num_submissions):
@@ -86,52 +48,6 @@ def read_data(problem):
 
     ids = list(activity_data.keys())
     return source_data, activity_data, ids, rubric_data
-
-
-def preprocess(nn_data):
-    programs = []
-    for ast in nn_data:
-        code_list = flatten_ast(ast)
-        code_str = ' '.join(code_list)
-        programs.append(code_str)
-    return np.array(programs)
-
-
-def make_prediction(problem, programs):
-    checkpoint_path = os.path.join(os.path.dirname(__file__), 'checkpoints', f'cp{problem}')
-    checkpoint_path = os.path.join(checkpoint_path, 'model_best.pth.tar')
-
-    device = torch.device('cpu')  # no CUDA support for now
-
-    checkpoint = torch.load(checkpoint_path)
-    config = checkpoint['config']
-
-    model = FeedbackNN(vocab_size=checkpoint['vocab_size'],
-                       num_labels=checkpoint['num_labels'])
-    model.load_state_dict(checkpoint['state_dict'])  # load trained model
-    model = model.eval()
-
-    # reproducibility
-    torch.manual_seed(config['seed'])
-    np.random.seed(config['seed'])
-
-    real_dataset = ProductionDataset(programs,
-                                     vocab=checkpoint['vocab'],
-                                     max_seq_len=config['max_seq_len'],
-                                     min_occ=config['min_occ'])
-    real_loader = data.DataLoader(real_dataset,
-                                  batch_size=config['batch_size'],
-                                  shuffle=False)
-
-    pred_arr = []
-    with torch.no_grad():
-        for (token_seq, token_len) in real_loader:
-            token_seq = token_seq.to(device)
-            token_len = token_len.to(device)
-            label_out = model(token_seq, token_len)
-            pred_npy = torch.round(label_out).detach().numpy()
-            pred_arr.append(pred_npy)
-    return pred_arr[0]
 
 
 def run_gui():
@@ -199,7 +115,7 @@ def run_gui():
 
             print()
             tScores = TScores(state)
-            tScores.getCurTransitionScores(rubric_data)
+            tScores.getCurrTransitionScores(rubric_data)
 
         print()
         with open('../data/student-rubric.json') as f:
