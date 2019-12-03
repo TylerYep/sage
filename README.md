@@ -29,13 +29,17 @@ Run `python train.py [problem_num]` to train the model.
 Run `python explore.py` to examine specific data examples.
 
 
-# TODO
+<!-- # TODO
 1. Visualizing this data somehow (cluster neighbors). @Peter/Natalie/Andrew
-2. Order by number of submissions?
+2. Order by number of submissions? -->
 
 ## Milestones
 - Wrote a grammar for p1-p4.
   - Learned what samples we were missing while we were sampling!
+    - P1 - 82%
+    - P2 - 99%
+    - P3 - 52%
+    - P4 - 56%
 - Created data exploration tool.
   - View a submission in its original code form.
   - Manually inspect student progress.
@@ -44,32 +48,18 @@ Run `python explore.py` to examine specific data examples.
 
 - Anomaly Detection.
   - Transition model
-    - Find "breakthrough moments"
-    - Find backtracking moments = "grit"
+    - Find breakthrough moments = a single large transition score
+    - Find backtracking moments = (not as important, save for later)
   - Bucketed learning
+    - Use the categories of learning that we identified across all problems, and get transition scores for each of those categories instead. This is a student's "report card".
 
   - Deep Learning
-  - Does amount of learning we arbitrarily calculated correlate with number of submissions later?
-  - Plot final score vs (number of submissions later * time spent)
+    - Does amount of learning we arbitrarily calculated correlate with number of submissions later?
+    - Plot final score vs (number of submissions later * time spent)
 
 - Ability Gradient Estimation.
   - Can you backprop student success on next problem to train transition weights for learning?
   - Model that predicts future success (number of submissions on next problem) based on calculated score?
-
-
-- P1 - 82%
-- P2 - 99%
-- P3 - 52%
-- P4 - 56%
-- P9 -
-
-
-  - nearest neighbors
-
-
-
-Students who learned most?
-
 
 
 
