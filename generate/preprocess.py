@@ -4,7 +4,7 @@ import numpy as np
 from codeDotOrg import pseudoCodeToTree
 from trainer.utils import OPEN_BRACKET, END_BRACKET
 from trainer.utils import train_test_split
-from trainer.labels import get_label_to_ix # LABEL_TO_IX, NUM_LABELS
+from trainer.labels import get_label_to_ix
 
 
 def flatten_ast(ast):
@@ -35,7 +35,7 @@ def main():
         os.makedirs(DATA_DIR)
     print('DATA_DIR is accessible.')
 
-    LABEL_TO_IX, IX_TO_LABEL, NUM_LABELS = get_label_to_ix(args.problem)
+    LABEL_TO_IX, _, NUM_LABELS = get_label_to_ix(args.problem)
 
     with open(args.raw_data_path, 'rb') as fp:
         data = pickle.load(fp)

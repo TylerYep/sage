@@ -29,4 +29,9 @@ if __name__ == "__main__":
     val_data_path = os.path.join(DATA_DIR, f'val_data_{args.problem}.pickle')
     test_data_path = os.path.join(DATA_DIR, f'test_data_{args.problem}.pickle')
 
-    trainer.train_pipeline(FeedbackNN, train_data_path, val_data_path, test_data_path, TRAINING_PARAMS)
+    trainer.train_pipeline(args.problem,
+                           FeedbackNN,
+                           train_data_path,
+                           val_data_path,
+                           test_data_path,
+                           TRAINING_PARAMS)

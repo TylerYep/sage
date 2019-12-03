@@ -9,14 +9,8 @@ import numpy as np
 
 from collections import Counter
 from collections import defaultdict, OrderedDict
-from .labels import get_labels
 
 import torch
-
-LABELS = get_labels(3)
-IX_TO_LABEL = {i: label for i, label in enumerate(LABELS)}
-LABEL_TO_IX = dict([[v,k] for k,v in IX_TO_LABEL.items()])
-NUM_LABELS = len(IX_TO_LABEL)
 
 # these are "special" tokens used often to handle language
 # given a sentence like "A brown dog.", we add these tokens

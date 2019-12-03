@@ -12,11 +12,11 @@ import torch.optim as optim
 import torch.utils.data as data
 import torch.nn.functional as F
 
-from .utils import AverageMeter, save_checkpoint, NUM_LABELS
+from .utils import AverageMeter, save_checkpoint
 from .datasets import RubricDataset, TransferDataset
+from .labels import get_label_to_ix
 
-
-def train_pipeline(model_class, train_data_path, val_data_path, test_data_path, config):
+def train_pipeline(problem, model_class, train_data_path, val_data_path, test_data_path, config):
     device = torch.device('cpu')  # no CUDA support for now
 
     # reproducibility
@@ -25,6 +25,8 @@ def train_pipeline(model_class, train_data_path, val_data_path, test_data_path, 
 
     if not os.path.isdir(config['out_dir']):
         os.makedirs(config['out_dir'])
+
+    _, _, NUM_LABELS = get_label_to_ix(problem)
 
     # load the dataset! this might be new for you guys but usually, we wrap
     # data into Dataset classes.
@@ -189,7 +191,7 @@ def train_pipeline(model_class, train_data_path, val_data_path, test_data_path, 
         # np.save(os.path.join(config['out_dir'], 'test_f1.npy'), track_test_f1)
 
 
-def transfer_pipeline(model_class, checkpoint_path, real_data_path):
+def transfer_pipeline(problem, model_class, checkpoint_path, real_data_path):
     device = torch.device('cpu')  # no CUDA support for now
 
     checkpoint = torch.load(checkpoint_path)
@@ -203,6 +205,8 @@ def transfer_pipeline(model_class, checkpoint_path, real_data_path):
     # reproducibility
     torch.manual_seed(config['seed'])
     np.random.seed(config['seed'])
+
+    _, _, NUM_LABELS = get_label_to_ix(problem)
 
     real_dataset = TransferDataset(real_data_path, NUM_LABELS, vocab=checkpoint['vocab'],
                                     max_seq_len=config['max_seq_len'], min_occ=config['min_occ'])

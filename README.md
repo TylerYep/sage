@@ -7,6 +7,8 @@ Adding more documentation because, heavens, we have guests!
 Obtain the Code Studio data from Chris Piech (cpiech) and put it in `data/`.
 
 ## Data Exploration
+Jump into generate with `cd generate/`.
+
 Run `python data_loader.py` to convert the data to json.
 
 Set `USE_FEEDBACK_NN = False` in explore.py.
@@ -16,7 +18,9 @@ Then, run `python explore.py` to examine specific data examples.
 ## Autograder
 Jump into generate with `cd generate/`.
 
-Run `python sample.py [problem_num]` to get training data. This will also give the top 50 submissions in the source data that were not represented in your grammar. Fix your grammar!
+Run `python sample.py [problem_num]` to get training data. This will also give the top 50 submissions in the source data that were not represented in your grammar. (Fix your grammar!)
+
+YOU CAN ALSO run `python sample.py 0 -a` to get all training data.
 
 Run `python preprocess.py [problem_num] [data_path_here.pkl]` to convert/split the data into train/val/test.
 

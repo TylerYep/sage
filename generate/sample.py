@@ -32,7 +32,7 @@ def main():
 
 def createDataList(problem, source_data_contains, count_data_map):
 	GRAMMAR_PATH = f'grammars/p{problem}'
-	MAX = 1000 if problem == 2 else 100000
+	MAX = 100000
 	REPETITIONS = 3
 
 	uniqueSubs = {}
