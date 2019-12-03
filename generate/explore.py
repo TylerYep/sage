@@ -15,121 +15,11 @@ from tree_encoder import TreeDecoder
 from codeDotOrg import autoFormat, pseudoCodeToTree, remove_whitespace
 from preprocess import flatten_ast
 from lstmmodels import FeedbackNN
+from gui import GUIState
 
-CURR_PROBLEMS = (1, 2, 3, 4)
+CURR_PROBLEMS = (1, 2)
 USE_FEEDBACK_NN = True
-
-SUBMISSION_LEFT = "["
-SUBMISSION_RIGHT = "]"
-ENTER = "\r"
-UNENTER = "\\"
-CTRLC = "\x03"
 SPACE = " "
-NEXT = "n"
-PREV = "p"
-FIND_ID = "f"
-SIMPLE_MODE_TOGGLE = "s"
-PROBLEMS = [str(i) for i in range(1, 11)]
-INSERT_RUBRIC_ITEM = "i"
-
-ALL_KEYS = ("", SUBMISSION_LEFT, SUBMISSION_RIGHT, SPACE, CTRLC, ENTER,
-            UNENTER, NEXT, PREV, FIND_ID, SIMPLE_MODE_TOGGLE,
-            *PROBLEMS, INSERT_RUBRIC_ITEM)
-
-
-def getch():
-    ''' Gets a single character from the user. '''
-    import termios
-    import tty
-
-    def _getch():
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(fd)
-            ch = sys.stdin.read(1)
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
-    return _getch()
-
-
-def get_action():
-    ''' Prints out the prompt and then waits for the user to select an action. '''
-    action = None
-    prompt = (f"\nType {PREV} or {UNENTER} to see the previous student.\n"
-              f"Type {NEXT} or RETURN to see the next student.\n\n"
-              f"Type {SUBMISSION_LEFT} to see the previous submission.\n"
-              f"Type {SUBMISSION_RIGHT} to see the next submission.\n\n"
-              f"Type {FIND_ID} to enter a specific student id.\n\n"
-              f"Type {SIMPLE_MODE_TOGGLE} to switch in/out of simple mode.\n\n"
-              f"Type {INSERT_RUBRIC_ITEM} to switch in/out of edit mode.\n\n"
-              f"Press SPACE to exit!\n\n")
-    print(prompt)
-
-    while action not in ALL_KEYS:
-        action = getch()
-        if action == CTRLC:
-            sys.exit()
-    return action
-
-
-class GUIState:
-    def __init__(self,
-                 action: str = None,
-                 student_id: str = None,
-                 history: List = [],
-                 curr_index: int = 0,
-                 curr_student: int = 0,
-                 simple_mode: bool = True,
-                 curr_problem: int = 1):
-        self.action = action
-        self.student_id = student_id
-        self.history = history
-        self.curr_index = curr_index
-        self.curr_student = curr_student
-        self.simple_mode = simple_mode
-        self.curr_problem = curr_problem
-
-    def next_student(self, ids):
-        self.curr_student += 1
-        if self.curr_student == len(self.history):
-            self.history.append(random.choice(ids))
-        self.student_id = self.history[self.curr_student]
-        self.curr_index = 0
-
-    def prev_student(self):
-        if self.curr_student > 0:
-            self.curr_student -= 1
-        self.student_id = self.history[self.curr_student]
-        self.curr_index = 0
-
-    def next_submission(self, num_submissions):
-        if self.curr_index + 1 == num_submissions:
-            print("This is the last submission!")
-        else:
-            self.curr_index += 1
-
-    def prev_submission(self):
-        if self.curr_index == 0:
-            print("This is the first submission!")
-        else:
-            self.curr_index -= 1
-
-    def toggle_simple_mode(self):
-        self.simple_mode = not self.simple_mode
-
-    def find_id(self, ids):
-        ID_LENGTH = 32
-        student_id = input(
-            "Type in a student id (or Enter for random student): ")
-        if len(student_id) != ID_LENGTH or student_id not in ids:
-            student_id = random.choice(ids)
-        self.student_id = student_id
-
-    def change_problem(self, prob_num):
-        self.curr_problem = prob_num
-        self.curr_index = 0
 
 
 def show_progress_bar(state, num_submissions):
@@ -162,34 +52,6 @@ def read_data(problem):
 
     ids = list(activity_data.keys())
     return source_data, activity_data, ids, rubric_data
-
-
-def get_rubric_input(student_id):
-    rubric_numbers = []
-    MAX_LINE_LENGTH = 36
-    with open('../data/rubric-items.json') as f:
-        rubric_items: Dict[List[str]] = json.load(f)
-        i = 0
-        for category in rubric_items:
-            for rubric_item in rubric_items[category]:
-                i += 1
-                rubric_numbers.append(rubric_item)
-                rub = f"{i}. {rubric_item}"
-                print(rub, end=(' ' * (MAX_LINE_LENGTH-len(rub))))
-                if i % 5 == 0:
-                    print()
-
-    rubric_line = input("Type in some applicable rubric items: ")
-    if rubric_line != '' and rubric_line.isdigit() and int(rubric_line) < len(rubric_numbers):
-        student_data = {}
-        with open('data/student-rubric.json') as f:
-            student_data: Dict[List[str]] = json.load(f)
-            if student_id not in student_data:
-                student_data[student_id] = []
-            student_data[student_id].append(rubric_numbers[int(rubric_line)-1])
-
-        with open('data/student-rubric.json', 'w') as f:
-            json.dump(student_data, f, indent=2)
 
 
 def preprocess(nn_data):
@@ -238,33 +100,32 @@ def make_prediction(problem, programs):
     return pred_arr[0]
 
 
-def run_gui(problems):
-    prob_data: Dict[Tuple] = {}
-    for num in problems:
+def run_gui():
+    prob_data: Dict[int, Tuple] = {}
+    for num in CURR_PROBLEMS:
         prob_data[num] = read_data(num)
 
-    source_data, activity_data, ids, rubric_data = prob_data[problems[0]]
+    source_data, activity_data, ids, rubric_data = prob_data[CURR_PROBLEMS[0]]
     student_id = random.choice(ids)
-    state = GUIState(student_id=student_id,
+    state = GUIState(prob_data,
+                     student_id=student_id,
                      history=[student_id],
-                     curr_problem=problems[0])
-
-    prev_problem = problems[0]
-    # prev_student = student_id
+                     curr_problem=CURR_PROBLEMS[0])
 
     while state.action != SPACE:
         os.system('clear')
 
-        if state.curr_problem != prev_problem:
-            source_data, activity_data, ids, rubric_data = prob_data[state.curr_problem]
-            prev_problem = state.curr_problem
+        source_data, activity_data, ids, rubric_data = state.get_problem_data()
 
         print("Student id:", state.student_id)
-        if state.student_id in activity_data:
-            student_submissions = \
+        if state.student_id not in activity_data:
+            print(f"\nStudent had no submission for Problem {state.curr_problem}.\n")
+        else:
+            state.submissions = \
                 [source_data[str(program_id)] for program_id, _ in activity_data[state.student_id]]
-            num_submissions = len(student_submissions)
-            problem = student_submissions[state.curr_index]
+
+            num_submissions = len(state.submissions)
+            problem = state.submissions[state.curr_index]
             program_id, timestamp = activity_data[state.student_id][state.curr_index]
             print("Submission:", state.curr_index+1, "out of", num_submissions)
             print("Timestamp:", timestamp)
@@ -281,7 +142,7 @@ def run_gui(problems):
             print("Rubric items: ")
             cleaned_program = remove_whitespace(program_tree)
             if USE_FEEDBACK_NN:
-                nn_data = preprocess(student_submissions)
+                nn_data = preprocess(state.submissions)
                 preds = make_prediction(state.curr_problem, nn_data)
                 if not preds[state.curr_index].any():
                     print("   Submission looks good!")
@@ -301,9 +162,6 @@ def run_gui(problems):
                 else:
                     print("\nNo rubric items found.\n")
 
-        else:
-            print(f"\nStudent had no submission for Problem {state.curr_problem}.\n")
-
         print()
         with open('../data/student-rubric.json') as f:
             student_data = json.load(f)
@@ -312,36 +170,12 @@ def run_gui(problems):
                     print(line)
         print()
 
-        state.action = get_action()
-
-        if state.action == ENTER or state.action == NEXT:
-            state.next_student(ids)
-
-        elif state.action == UNENTER or state.action == PREV:
-            state.prev_student()
-
-        elif state.action == SUBMISSION_RIGHT:
-            state.next_submission(num_submissions)
-
-        elif state.action == SUBMISSION_LEFT:
-            state.prev_submission()
-
-        elif state.action == FIND_ID:
-            state.find_id(ids)
-
-        elif state.action == SIMPLE_MODE_TOGGLE:
-            state.toggle_simple_mode()
-
-        elif state.action in PROBLEMS:
-            if int(state.action) in problems:
-                state.change_problem(int(state.action))
-
-        elif state.action == INSERT_RUBRIC_ITEM:
-            get_rubric_input(state.student_id)
+        state.get_action()
+        state.update_state(ids)
 
 
 if __name__ == '__main__':
-    run_gui(CURR_PROBLEMS)
+    run_gui()
 
     # Problem 1 interesting:
     # 1eb24f31bcd0c1be6b6f1f5a90aeec7b
