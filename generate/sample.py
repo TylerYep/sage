@@ -20,7 +20,7 @@ def main():
 	args = parser.parse_args()
 	if args.all:
 		print("Sampling all problems...")
-		for i in (1,2,3,4):
+		for i in (1, 2, 3, 4):
 			print("Sampling for problem", i)
 			sample(i)
 	elif args.problem == 0:

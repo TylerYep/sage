@@ -114,7 +114,7 @@ def run_gui():
                     print("\nNo rubric items found.\n")
 
             print()
-            tScores = TScores(state)
+            tScores = TScores(state, CURR_PROBLEMS)
             tScores.getCurrTransitionScores(rubric_data)
 
         print()
