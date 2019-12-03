@@ -17,7 +17,7 @@ from preprocess import flatten_ast
 from lstmmodels import FeedbackNN
 from gui import GUIState
 
-CURR_PROBLEMS = (3, 4)
+CURR_PROBLEMS = (1, 2, 3, 4)
 USE_FEEDBACK_NN = True
 SPACE = " "
 
@@ -216,7 +216,7 @@ def run_gui():
                      history=[student_id],
                      curr_problem=CURR_PROBLEMS[0])
 
-    
+
 
     while state.action != SPACE:
         os.system('clear')

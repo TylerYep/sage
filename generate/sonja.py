@@ -6,6 +6,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 import torch.nn.utils.rnn as rnn_utils
 
+
 class FeedbackNN(nn.Module):
     """
     Neural network responsible for ingesting a tokenized student
@@ -18,12 +19,12 @@ class FeedbackNN(nn.Module):
 
     def __init__(self, vocab_size, num_labels):
         super().__init__()
-        # These modules define trainable parameters.
-        self.embed_size = 20
-        self.hidden_size = 50
-        self.embed = nn.Embedding(vocab_size, self.embed_size)
-        self.lstm = nn.LSTM(self.embed_size, self.hidden_size, bidirectional=False)
-        self.fc = nn.Linear(self.hidden_size*52, num_labels)
+        embed_size = 100
+        hidden_size = 50
+        self.embed = nn.Embedding(vocab_size, embed_size)
+        self.rnn = nn.LSTM(input_size=embed_size, hidden_size=hidden_size, num_layers=1, batch_first=True)
+        self.proj = nn.Linear(hidden_size, num_labels)
+
 
     def forward(self, token_seq, token_length):
         """
@@ -45,39 +46,19 @@ class FeedbackNN(nn.Module):
             since we can have multiple feedback at once.
 
             This will be given to F.binary_cross_entropy(...), just like IRT!
+
+        Used the tutorial at https://github.com/HarshTrivedi/packing-unpacking-pytorch-minimal-tutorial.
         """
-        # Sonja Code
-        # seq_lengths, perm_idx = token_length.sort(0, descending=True)
-        # token_seq = token_seq[perm_idx]
-
-        # embed_seq = self.embed(token_seq)
-        # packed = rnn_utils.pack_padded_sequence(embed_seq, seq_lengths.cpu().numpy(), batch_first=True)
-        # packed_output, (h_t, c_t) = self.lstm(packed)
-        # out = self.fc(h_t[-1])
-
-        # _, unperm_idx = perm_idx.sort(0)
-        # out = out[unperm_idx]
-        # out = torch.sigmoid(out)
-        # return out
-
-        batch_size, max_seq_length = token_seq.shape # (100, 52)
-
-        sorted_lengths, perm_idx = token_length.sort(0, descending=True)
+        seq_lengths, perm_idx = token_length.sort(0, descending=True)
         token_seq = token_seq[perm_idx]
-
         embed_seq = self.embed(token_seq)
-        packed = rnn_utils.pack_padded_sequence(
-            embed_seq,
-            sorted_lengths.data.tolist() if batch_size > 1 else token_length.data.tolist(),
-            batch_first=True
-        )
 
-        packed_output, hidden = self.lstm(packed)
-        out, input_sizes = rnn_utils.pad_packed_sequence(packed_output, batch_first=True)
+        packed = rnn_utils.pack_padded_sequence(embed_seq, seq_lengths.cpu().numpy(), batch_first=True)
+        packed_output, (h_t, c_t) = self.rnn(packed)
+
+        linear_out = self.proj(h_t[-1])
+
         _, unperm_idx = perm_idx.sort(0)
-        out = out[unperm_idx]
-
-        out = out.reshape(batch_size, -1)
-        out = self.fc(out)
-        out = torch.sigmoid(out)
-        return out
+        output = linear_out[unperm_idx]
+        output = F.sigmoid(output)
+        return output
