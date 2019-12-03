@@ -9,7 +9,7 @@ import torch
 import torch.utils.data as data
 
 import trainer
-from trainer.labels import get_label_to_ix
+from trainer.labels import get_label_to_ix, get_labels
 from trainer.datasets import ProductionDataset
 from tree_encoder import TreeDecoder
 from codeDotOrg import autoFormat, pseudoCodeToTree, remove_whitespace
@@ -20,77 +20,6 @@ from gui import GUIState
 CURR_PROBLEMS = (1, 2, 3, 4)
 USE_FEEDBACK_NN = True
 SPACE = " "
-
-def get_labels(problem):
-    ''' map from integers to feedback labels '''
-    labels = []
-    if problem == 1:
-        labels = [
-            'noCode',
-            'missingRepeat',
-            'triangle-wrongNumSides',
-            'triangle-tooManyActions',
-            'triangle-wrongMoveTurnOrder',
-            'side-forgotTurn',
-            'side-forgotMove',
-            'move-wrongAmount',
-            'turn-rightLeftConfusion',
-            'turn-wrongAmount',
-        ]
-
-    elif problem == 2:
-        labels = [
-            'noCode',
-            'forLoop-wrongLoop',
-            'triangle-wrongNumSides',
-        ]
-
-    elif problem == 3:
-        labels = [
-            'no-code',
-            'shapeLoop-none',
-            'triangle-none',
-            'side-none',
-            'move-wrongAmount',
-            'shapeLoopHeader-missingValue',
-            'shapeLoopHeader-wrongOrder',
-            'shapeLoopHeader-wrongDelta',
-            'shapeLoopHeader-wrongEnd',
-            'shapeLoopHeader-wrongStart',
-            'triangle-armsLength',
-            'triangle-unrolled',
-            'triangle-wrongNumSides',
-            'side-forgotLeft',
-            'side-forgotMove',
-            'side-wrongMoveLeftOrder',
-            'side-armsLength',
-            'turn-wrongAmount',
-            'turn-rightLeftConfusion',
-        ]
-
-    elif problem == 4:
-        labels = [
-            'no-code',
-            'shapeLoop-none',
-            'square-none',
-            'side-none',
-            'move-wrongAmount',
-            'shapeLoopHeader-missingValue',
-            'shapeLoopHeader-wrongOrder',
-            'shapeLoopHeader-wrongDelta',
-            'shapeLoopHeader-wrongEnd',
-            'shapeLoopHeader-wrongStart',
-            'square-armsLength',
-            'square-unrolled',
-            'square-wrongNumSides',
-            'side-forgotLeft',
-            'side-forgotMove',
-            'side-wrongMoveLeftOrder',
-            'side-armsLength',
-            'turn-wrongAmount',
-            'turn-rightLeftConfusion',
-        ]
-    return labels
 
 class TScores:
     def __init__(self, state):
@@ -215,8 +144,6 @@ def run_gui():
                      student_id=student_id,
                      history=[student_id],
                      curr_problem=CURR_PROBLEMS[0])
-
-
 
     while state.action != SPACE:
         os.system('clear')
