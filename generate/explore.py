@@ -198,8 +198,9 @@ def run_gui():
                     print("\nNo rubric items found.\n")
 
             print()
-            tScores = TScores(state)
-            tScores.getCurTransitionScores(rubric_data)
+            # tScores = TScores(state)
+            # tScores.getCurTransitionScores(rubric_data)
+
         print()
         with open('../data/student-rubric.json') as f:
             student_data = json.load(f)

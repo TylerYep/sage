@@ -21,6 +21,7 @@ class FeedbackNN(nn.Module):
         # These modules define trainable parameters.
         self.embed_size = 20
         self.hidden_size = 50
+        self.num_labels = num_labels
         self.embed = nn.Embedding(vocab_size, self.embed_size)
         self.lstm = nn.LSTM(self.embed_size, self.hidden_size, bidirectional=False)
         self.fc = nn.Linear(self.hidden_size*52, num_labels)
@@ -78,6 +79,10 @@ class FeedbackNN(nn.Module):
         out = out[unperm_idx]
 
         out = out.reshape(batch_size, -1)
-        out = self.fc(out)
+        if out.shape[1] == self.hidden_size*52:
+            out = self.fc(out)
+        else:
+            out = nn.Linear(out.shape[1], self.num_labels)(out)
+    
         out = torch.sigmoid(out)
         return out
