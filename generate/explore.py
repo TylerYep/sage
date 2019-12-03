@@ -17,9 +17,113 @@ from preprocess import flatten_ast
 from lstmmodels import FeedbackNN
 from gui import GUIState
 
-CURR_PROBLEMS = (1, 2)
+CURR_PROBLEMS = (3, 4)
 USE_FEEDBACK_NN = True
 SPACE = " "
+
+def get_labels(problem):
+    ''' map from integers to feedback labels '''
+    labels = []
+    if problem == 1:
+        labels = [
+            'noCode',
+            'missingRepeat',
+            'triangle-wrongNumSides',
+            'triangle-tooManyActions',
+            'triangle-wrongMoveTurnOrder',
+            'side-forgotTurn',
+            'side-forgotMove',
+            'move-wrongAmount',
+            'turn-rightLeftConfusion',
+            'turn-wrongAmount',
+        ]
+
+    elif problem == 2:
+        labels = [
+            'noCode',
+            'forLoop-wrongLoop',
+            'triangle-wrongNumSides',
+        ]
+
+    elif problem == 3:
+        labels = [
+            'no-code',
+            'shapeLoop-none',
+            'triangle-none',
+            'side-none',
+            'move-wrongAmount',
+            'shapeLoopHeader-missingValue',
+            'shapeLoopHeader-wrongOrder',
+            'shapeLoopHeader-wrongDelta',
+            'shapeLoopHeader-wrongEnd',
+            'shapeLoopHeader-wrongStart',
+            'triangle-armsLength',
+            'triangle-unrolled',
+            'triangle-wrongNumSides',
+            'side-forgotLeft',
+            'side-forgotMove',
+            'side-wrongMoveLeftOrder',
+            'side-armsLength',
+            'turn-wrongAmount',
+            'turn-rightLeftConfusion',
+        ]
+
+    elif problem == 4:
+        labels = [
+            'no-code',
+            'shapeLoop-none',
+            'square-none',
+            'side-none',
+            'move-wrongAmount',
+            'shapeLoopHeader-missingValue',
+            'shapeLoopHeader-wrongOrder',
+            'shapeLoopHeader-wrongDelta',
+            'shapeLoopHeader-wrongEnd',
+            'shapeLoopHeader-wrongStart',
+            'square-armsLength',
+            'square-unrolled',
+            'square-wrongNumSides',
+            'side-forgotLeft',
+            'side-forgotMove',
+            'side-wrongMoveLeftOrder',
+            'side-armsLength',
+            'turn-wrongAmount',
+            'turn-rightLeftConfusion',
+        ]
+    return labels
+
+class TScores:
+    def __init__(self, state):
+        self.state = state
+        self.label_weights = {i: [1 for j in range(len(get_labels(i)))] for i in range(1, 5)}
+        self.scores = [[0, -1], [1, 0]] # scores[a][b] means score for transition from a to b
+
+    def getCurTransitionScores(self, rubric_data):
+        output = ''
+        tScores = []
+        curStudent = self.state.curr_student
+        nn_data = preprocess(self.state.submissions)
+        preds = make_prediction(self.state.curr_problem, nn_data)
+        if len(self.state.submissions) == 1:
+            print('No Transition Scores (Only 1 Submission)')
+        else:
+            print('Transition Scores\n')
+            totalScore = 0
+            for i in range(len(self.state.submissions) - 1):
+                rub1 = preds[i]
+                rub2 = preds[i + 1]
+                tList = [self.scores[int(rub1[i])][int(rub2[i])] for i in range(len(rub1))]
+                score = 0
+                for j in range(len(tList)):
+                    score += (self.label_weights[self.state.curr_problem][j] * tList[j])
+                print(f'Sub {i+1} to Sub {i+2} with transition learning score of {score}: ', tList)
+                totalScore += score
+            print(f'\nFinal Learning Score: {totalScore}')
+            print(f'\nEnded with {int(sum(preds[len(self.state.submissions) - 1]))} out of {len(preds[len(self.state.submissions) - 1])} rubric items')
+
+    def updateWeights(self, problem, weights):
+        if problem in self.label_weights and len(weights) == len(self.label_weights[problem]):
+            self.label_weights[problem] = weights
 
 
 def show_progress_bar(state, num_submissions):
@@ -112,6 +216,8 @@ def run_gui():
                      history=[student_id],
                      curr_problem=CURR_PROBLEMS[0])
 
+    
+
     while state.action != SPACE:
         os.system('clear')
 
@@ -162,6 +268,9 @@ def run_gui():
                 else:
                     print("\nNo rubric items found.\n")
 
+            print()
+            tScores = TScores(state)
+            tScores.getCurTransitionScores(rubric_data)
         print()
         with open('../data/student-rubric.json') as f:
             student_data = json.load(f)
