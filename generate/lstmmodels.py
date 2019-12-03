@@ -47,20 +47,6 @@ class FeedbackNN(nn.Module):
 
             This will be given to F.binary_cross_entropy(...), just like IRT!
         """
-        # Sonja Code
-        # seq_lengths, perm_idx = token_length.sort(0, descending=True)
-        # token_seq = token_seq[perm_idx]
-
-        # embed_seq = self.embed(token_seq)
-        # packed = rnn_utils.pack_padded_sequence(embed_seq, seq_lengths.cpu().numpy(), batch_first=True)
-        # packed_output, (h_t, c_t) = self.lstm(packed)
-        # out = self.fc(h_t[-1])
-
-        # _, unperm_idx = perm_idx.sort(0)
-        # out = out[unperm_idx]
-        # out = torch.sigmoid(out)
-        # return out
-
         batch_size, max_seq_length = token_seq.shape # (100, 52)
 
         sorted_lengths, perm_idx = token_length.sort(0, descending=True)
@@ -83,6 +69,6 @@ class FeedbackNN(nn.Module):
             out = self.fc(out)
         else:
             out = nn.Linear(out.shape[1], self.num_labels)(out)
-    
+
         out = torch.sigmoid(out)
         return out
