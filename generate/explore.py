@@ -48,7 +48,8 @@ class TScores:
                 print(f'Sub {i+1} to Sub {i+2} with transition learning score of {score}: ', tList)
                 totalScore += score
             print(f'\nFinal Learning Score: {totalScore}')
-            print(f'\nEnded with {int(sum(preds[len(self.state.submissions) - 1]))} out of {len(preds[len(self.state.submissions) - 1])} rubric items')
+            print(f'\nEnded with {int(sum(preds[len(self.state.submissions) - 1]))}',
+                  f'out of {len(preds[len(self.state.submissions) - 1])} rubric items')
 
     def updateWeights(self, problem, weights):
         if problem in self.label_weights and len(weights) == len(self.label_weights[problem]):
@@ -174,24 +175,25 @@ def run_gui():
 
             print("Rubric items: ")
             cleaned_program = remove_whitespace(program_tree)
+            spaces = "   "
             if USE_FEEDBACK_NN:
                 nn_data = preprocess(state.submissions)
                 preds = make_prediction(state.curr_problem, nn_data)
                 if not preds[state.curr_index].any():
-                    print("   Submission looks good!")
+                    print(spaces, "Submission looks good!")
                 else:
                     for index in range(len(preds[state.curr_index])):
                         if preds[state.curr_index][index] == 1:
                             _, IX_TO_LABEL, _ = get_label_to_ix(state.curr_problem)
-                            print('   ', IX_TO_LABEL[index])
+                            print(spaces, IX_TO_LABEL[index])
 
             else:
                 if cleaned_program in rubric_data:
                     if len(rubric_data[cleaned_program]) == 0:
-                        print("   Submission looks good!")
+                        print(spaces, "Submission looks good!")
                     else:
                         for item in rubric_data[cleaned_program]:
-                            print('   ', item)
+                            print(spaces, item)
                 else:
                     print("\nNo rubric items found.\n")
 
