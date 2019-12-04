@@ -56,7 +56,7 @@ def make_prediction(problem, programs):
 
 
 if __name__ == '__main__':
-    for problem in (2, 3, 4):
+    for problem in (1, 2, 3, 4):
         with open(f'../data/p{problem}/sources-{problem}.json') as source_file:
             source_data = json.load(source_file, cls=TreeDecoder)
         source_list = [source_data[str(i)] for i in range(len(source_data))]
