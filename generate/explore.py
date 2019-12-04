@@ -94,7 +94,7 @@ def run_gui():
             spaces = "   "
             if USE_FEEDBACK_NN:
                 nn_data = preprocess(state.submissions)
-                preds = make_prediction(state.curr_problem, nn_data)
+                preds = make_prediction(state.curr_problem, nn_data)[0]
                 if not preds[state.curr_index].any():
                     print(spaces, "Submission looks good!")
                 else:

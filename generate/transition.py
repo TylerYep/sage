@@ -13,7 +13,7 @@ class TScores:
         tScores = []
         curStudent = self.state.curr_student
         nn_data = preprocess(self.state.submissions)
-        preds = make_prediction(self.state.curr_problem, nn_data)
+        preds = make_prediction(self.state.curr_problem, nn_data)[0]
         if len(self.state.submissions) == 1:
             print('No Transition Scores (Only 1 Submission)')
         else:

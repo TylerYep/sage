@@ -75,3 +75,54 @@ def get_labels(problem):
             'turn-rightLeftConfusion',
         ]
     return labels
+
+def get_learning_goals():
+    return {
+        'atomicStatements': [
+            'side-forgotTurn',
+            'side-forgotMove',
+            'turn-rightLeftConfusion',
+            'side-none',
+            'side-forgotLeft',
+            'side-wrongMoveLeftOrder',
+
+        ],
+        'measurements': [
+            'turn-wrongAmount',
+            'move-wrongAmount',
+        ],
+        'conditionals': [
+
+        ],
+        'repeat': [
+            'missingRepeat',
+            'triangle-wrongNumSides',
+            'triangle-tooManyActions',
+            'triangle-wrongMoveTurnOrder',
+            'square-armsLength',
+            'square-unrolled',
+            'square-wrongNumSides',
+            'triangle-none',
+            'square-none',
+
+        ],
+        'forLoop': [
+            'forLoop-wrongLoop',
+            'shapeLoop-none',
+            'shapeLoopHeader-missingValue',
+            'shapeLoopHeader-wrongOrder',
+            'shapeLoopHeader-wrongDelta',
+            'shapeLoopHeader-wrongEnd',
+            'shapeLoopHeader-wrongStart',
+        ],
+        'nestedLoops': [
+
+        ],
+        'variables': [
+            'move-wrongAmount',
+
+        ],
+        'math': [
+
+        ]
+    }

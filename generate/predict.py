@@ -1,13 +1,13 @@
 import os
 import numpy as np
-
+import json
 import torch
 import torch.utils.data as data
 
 from trainer.datasets import ProductionDataset
 from preprocess import flatten_ast
 from lstmmodels import FeedbackNN
-
+from tree_encoder import TreeDecoder
 
 def preprocess(nn_data):
     programs = []
@@ -52,4 +52,18 @@ def make_prediction(problem, programs):
             label_out = model(token_seq, token_len)
             pred_npy = torch.round(label_out).detach().numpy()
             pred_arr.append(pred_npy)
-    return pred_arr[0]
+    return pred_arr
+
+
+if __name__ == '__main__':
+    for problem in (2, 3, 4):
+        with open(f'../data/p{problem}/sources-{problem}.json') as source_file:
+            source_data = json.load(source_file, cls=TreeDecoder)
+        source_list = [source_data[str(i)] for i in range(len(source_data))]
+        nn_data = preprocess(source_list)
+        preds = make_prediction(problem, nn_data)
+
+        rubric_preds = {str(i): list(map(int, preds[i//100][i % 100])) for i in range(len(source_data))}
+        print(rubric_preds)
+        with open(f'generated/rubric-{problem}.json', 'w') as dest_file:
+            json.dump(rubric_preds, dest_file)
