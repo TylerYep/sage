@@ -91,9 +91,7 @@ def get_learning_goals():
             'turn-wrongAmount',
             'move-wrongAmount',
         ],
-        'conditionals': [
-
-        ],
+        # 'conditionals': [],
         'repeat': [
             'missingRepeat',
             'triangle-wrongNumSides',
@@ -115,14 +113,15 @@ def get_learning_goals():
             'shapeLoopHeader-wrongEnd',
             'shapeLoopHeader-wrongStart',
         ],
-        'nestedLoops': [
-
-        ],
-        'variables': [
-            'move-wrongAmount',
-
-        ],
-        'math': [
-
-        ]
+        # 'nestedLoops': [],
+        # 'variables': ['move-wrongAmount'],
+        # 'math': []
     }
+
+def reverse_learning_goals():
+    goals = get_learning_goals()
+    rev = {}
+    for key in goals:
+        for item in goals[key]:
+            rev[item] = key
+    return rev

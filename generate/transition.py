@@ -9,7 +9,7 @@ class TScores:
         self.label_weights = {i: [1 for j in range(len(get_labels(i)))] for i in problems}
         self.scores = [[0, -0.5], [1, 0]] # scores[a][b] means score for transition from a to b
 
-    def getCurrTransitionScores(self, rubric_data):
+    def get_transition_scores(self, rubric_data):
         tScores = []
         curStudent = self.state.curr_student
         nn_data = preprocess(self.state.submissions)
@@ -34,6 +34,6 @@ class TScores:
             print(f'(Ended with {int(sum(preds[len(self.state.submissions) - 1]))}',
                   f'out of {len(preds[len(self.state.submissions) - 1])} rubric items)')
 
-    def updateWeights(self, problem, weights):
+    def update_weights(self, problem, weights):
         if problem in self.label_weights and len(weights) == len(self.label_weights[problem]):
             self.label_weights[problem] = weights

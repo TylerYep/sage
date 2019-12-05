@@ -6,7 +6,7 @@ import random
 import pickle
 
 import trainer
-from trainer.labels import get_label_to_ix
+from trainer.labels import get_label_to_ix, get_learning_goals
 from tree_encoder import TreeDecoder
 from codeDotOrg import autoFormat, pseudoCodeToTree, remove_whitespace
 from gui import GUIState
@@ -27,7 +27,7 @@ def show_progress_bar(state, num_submissions):
         else:
             progress_bar += ("-" * (LENGTH // num_submissions))
     progress_bar += "|"
-    print(progress_bar)
+    print(progress_bar, "\n")
 
 
 def read_data(problem):
@@ -46,8 +46,11 @@ def read_data(problem):
         with open(f'generated/uniqueSubs-{problem}.json') as rubric_file:
             rubric_data = json.load(rubric_file)
 
+    with open(f'generated/reportcards.json') as report_file:
+        report_cards = json.load(report_file)
+
     ids = list(activity_data.keys())
-    return source_data, activity_data, ids, rubric_data
+    return source_data, activity_data, ids, rubric_data, report_cards
 
 
 def run_gui():
@@ -55,7 +58,7 @@ def run_gui():
     for num in CURR_PROBLEMS:
         prob_data[num] = read_data(num)
 
-    source_data, activity_data, ids, rubric_data = prob_data[CURR_PROBLEMS[0]]
+    _, _, ids, _, _ = prob_data[CURR_PROBLEMS[0]]
     student_id = random.choice(ids)
     state = GUIState(prob_data,
                      student_id=student_id,
@@ -65,7 +68,7 @@ def run_gui():
     while state.action != SPACE:
         os.system('clear')
 
-        source_data, activity_data, ids, rubric_data = state.get_problem_data()
+        source_data, activity_data, ids, rubric_data, report_cards = state.get_problem_data()
 
         print("Student id:", state.student_id)
         if state.student_id not in activity_data:
@@ -92,6 +95,7 @@ def run_gui():
             print("Rubric items: ")
             cleaned_program = remove_whitespace(program_tree)
             spaces = "   "
+
             if USE_FEEDBACK_NN:
                 nn_data = preprocess(state.submissions)
                 preds = make_prediction(state.curr_problem, nn_data)[0]
@@ -103,6 +107,20 @@ def run_gui():
                             _, IX_TO_LABEL, _ = get_label_to_ix(state.curr_problem)
                             print(spaces, IX_TO_LABEL[index])
 
+                # print()
+                # tScores = TScores(state, CURR_PROBLEMS)
+                # tScores.get_transition_scores(rubric_data)
+                if state.show_report_card:
+                    print("\n\n\n")
+                    print("-"*50, "")
+                    print("Report Card - Student Summary\n")
+                    print("Total Estimated Change in Ability: ", report_cards[state.student_id]['0'])
+                    for num in CURR_PROBLEMS:
+                        rubric_item_indexes = report_cards[state.student_id][str(num)]
+                        _, IX_TO_LABEL, _ = get_label_to_ix(num)
+                        for idx in rubric_item_indexes:
+                            print(num, IX_TO_LABEL[idx])
+
             else:
                 if cleaned_program in rubric_data:
                     if len(rubric_data[cleaned_program]) == 0:
@@ -112,10 +130,6 @@ def run_gui():
                             print(spaces, item)
                 else:
                     print("\nNo rubric items found.\n")
-
-            print()
-            tScores = TScores(state, CURR_PROBLEMS)
-            tScores.getCurrTransitionScores(rubric_data)
 
         print()
         with open('../data/student-rubric.json') as f:

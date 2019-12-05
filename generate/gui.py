@@ -17,10 +17,11 @@ FIND_ID = "f"
 SIMPLE_MODE_TOGGLE = "s"
 ALL_POSSIBLE_PROBLEMS = [str(i) for i in range(1, 11)]
 INSERT_RUBRIC_ITEM = "i"
+SHOW_REPORT_CARD = "r"
 
 ALL_KEYS = ("", SUBMISSION_LEFT, SUBMISSION_RIGHT, SPACE, CTRLC, ENTER,
             UNENTER, NEXT, PREV, FIND_ID, SIMPLE_MODE_TOGGLE,
-            *ALL_POSSIBLE_PROBLEMS, INSERT_RUBRIC_ITEM)
+            *ALL_POSSIBLE_PROBLEMS, INSERT_RUBRIC_ITEM, SHOW_REPORT_CARD)
 
 
 class GUIState:
@@ -43,6 +44,7 @@ class GUIState:
         self.simple_mode = simple_mode
         self.curr_problem = curr_problem
         self.submissions = submissions
+        self.show_report_card = False
 
     def get_action(self):
         ''' Prints out the prompt and then waits for the user to select an action. '''
@@ -66,6 +68,7 @@ class GUIState:
                 f"Type {FIND_ID} to enter a specific student id.\n\n"
                 f"Type {SIMPLE_MODE_TOGGLE} to switch in/out of simple mode.\n\n"
                 f"Type {INSERT_RUBRIC_ITEM} to switch in/out of edit mode.\n\n"
+                f"Type {SHOW_REPORT_CARD} to show/hide report card.\n\n"
                 f"Press SPACE to exit!\n\n")
         print(prompt)
 
@@ -148,6 +151,9 @@ class GUIState:
     def get_problem_data(self):
         return self.problem_data[self.curr_problem]
 
+    def show_report(self):
+        self.show_report_card = not self.show_report_card
+
     def update_state(self, ids):
 
         if self.action in (ENTER, NEXT):
@@ -173,3 +179,6 @@ class GUIState:
 
         elif self.action == INSERT_RUBRIC_ITEM:
             self.get_rubric_input()
+
+        elif self.action == SHOW_REPORT_CARD:
+            self.show_report()
