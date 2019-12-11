@@ -2,6 +2,7 @@ from typing import Dict, Tuple, List
 import json
 import numpy as np
 import sys
+import math
 
 from gui import GUIState
 from trainer.labels import get_learning_goals, get_labels
@@ -38,7 +39,7 @@ def get_report_card():
             activity_data, _, rubric_scores = prob_data[problem]
             if student_id in activity_data:
                 scores = [rubric_scores[str(program_id)] for program_id, _ in activity_data[student_id]]
-                prob_score, learned_items = transitions(scores, problem, LABELS)
+                prob_score, learned_items = transitions(student_id, scores, problem, LABELS)
                 total_score += prob_score
                 report_card[problem] = learned_items
             else:
@@ -47,17 +48,38 @@ def get_report_card():
         report_cards[student_id] = report_card
 
     with open(f'generated/reportcards.json', 'w') as dest_file:
-        json.dump(report_cards, dest_file)
+        json.dump(report_cards, dest_file, indent=2)
 
 
-def transitions(scores, problem, LABELS):
+def createTransList(student_id, scores, trans_matrix, sub1, sub2, discounts, discount_factor):
+    t_list = []
+    for j in range(len(sub1)):
+        val = trans_matrix[int(sub1[j])][int(sub2[j])]
+        if val == 1:
+            t_list.append(val*discounts[j])
+            if discounts[j] != 0.5:
+                discounts[j] *= discount_factor
+                if discounts[j] < 0.5:
+                    discounts[j] = 0.5
+        else:
+            t_list.append(val)
+
+    return t_list
+
+
+def transitions(student_id, scores, problem, LABELS):
     transition_matrix = [[0, -0.5], [1, 0]] # scores[a][b] means score for transition from a to b
+    discounts = [1 for _ in range(len(scores[0]))]
+    discount_factor = 0.9
     totalScore = 0
     final_list = np.zeros(len(scores[0]))
     for i in range(len(scores) - 1):
         sub1, sub2 = scores[i], scores[i + 1]
-        t_list = np.array([transition_matrix[int(sub1[i])][int(sub2[i])] for i in range(len(sub1))])
+        t_list = np.array(createTransList(student_id, scores, transition_matrix, sub1, sub2, discounts, discount_factor))
+        # np.array([transition_matrix[int(sub1[i])][int(sub2[i])] for i in range(len(sub1))])
         totalScore += sum(t_list)
+        # if student_id == 'ebd0a6afe46d7ee3d01321e89e7b8950':
+        #     print(t_list)
         final_list += t_list
 
     learned_items = []
@@ -65,8 +87,9 @@ def transitions(scores, problem, LABELS):
         if item != 0:
             learned_items.append(i)
             # learned_items.append((i, item))
-
-    return totalScore, learned_items
+    # if student_id == 'ebd0a6afe46d7ee3d01321e89e7b8950':
+    #     print(totalScore)
+    return totalScore/math.sqrt(len(scores)), learned_items
 
 
 
