@@ -8,7 +8,7 @@ class Transitions:
     def __init__(self, activities_data, rubric_data, problem):
         self.activities_data = activities_data
         self.rubric_data = rubric_data
-        self.tScores = {} # from student ID to transition scores
+        self.tScores = {}  # from student ID to transition scores
         self.problem = problem
         self.learning_goals = get_learning_goals()
         self.bScores = {}
@@ -181,8 +181,6 @@ class Transitions:
     def generateTotalScoreGraphsOLD(self):
         x, y = self.getXandYOLD()
         plt.bar(np.array(x), np.array(y), width=0.5)
-        # print(x)
-        # print(y)
         plt.xlabel('Total Learning Score')
         plt.ylabel('Number of Students')
         plt.title('p' + str(self.problem) + ' total learning score for each student (with old formula)')
@@ -275,11 +273,6 @@ class Transitions:
     #                 totalScoreIDs += self.totalScoreToID[round(i/2, self.precision)]
     #         json.dump(totalScoreIDs, dest_file, indent=2)
 
-
-
-
-    # def generateBacktrackGraphs(self):
-
 class AllProbsTransitions:
     def __init__(self, problems):
         self.problems = problems
@@ -369,29 +362,7 @@ class AllProbsTransitions:
 
 
 if __name__ == '__main__':
-
     everything = AllProbsTransitions((1, 2, 3, 4))
     everything.initialize()
     everything.doEverything()
     everything.saveAllScores()
-
-
-
-    # for problem in (1, 2, 3, 4):
-    #     with open(f'../data/p{problem}/activities-{problem}.json') as activities_file:
-    #         activities_data = json.load(activities_file)
-    #         with open(f'generated/rubric-{problem}.json') as rubric_file:
-    #             rubric_data = json.load(rubric_file)
-    #             t = Transitions(activities_data, rubric_data, problem)
-    #             # print(rubric_data)
-    #             t.generateTransitionScores()
-    #             t.generateBreakthroughGraphs()
-    #             t.generateLowPointsGraphs()
-    #             t.saveMinIDs()
-    #             t.saveMaxIDs()
-    #             print('Finished p' + str(problem))
-
-
-
-        # with open(f'generated/rubric-{problem}.json', 'w') as dest_file:
-        #     json.dump(rubric_preds, dest_file, indent=2)

@@ -29,6 +29,7 @@ class FeedbackNN(nn.Module):
     def forward(self, token_seq, token_length):
         """
         Forward pass for your feedback prediction network.
+        By Sonja!
 
         @param token_seq: batch_size x max_seq_length
             Example: torch.Tensor([[0,6,2,3],[0,2,5,3], ...])
