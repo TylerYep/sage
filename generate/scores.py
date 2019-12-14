@@ -290,7 +290,7 @@ class AllProbsTransitions:
         for p in self.transitions:
             self.transitions[p].generateTransitionScores()
             self.transitions[p].generateTotalScoreGraphs()
-            self.transitions[p].generateTotalScoreGraphsOLD()
+            # self.transitions[p].generateTotalScoreGraphsOLD()
             # self.transitions[p].generateBreakthroughGraphs()
             # self.transitions[p].generateLowPointsGraphs()
             # self.transitions[p].saveMinIDs()
@@ -343,8 +343,6 @@ class AllProbsTransitions:
                     else:
                         scores.append('0')
                 IDtoScores[someID] = scores
-            # print('min scores', min_scores)
-            # print('max scores', max_scores)
             json.dump(IDtoScores, dest_file, indent=2)
 
         # with open(f'generated/totalScores.json', 'w') as dest_file:

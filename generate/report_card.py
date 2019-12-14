@@ -76,22 +76,15 @@ def transitions(student_id, scores, problem, LABELS):
     for i in range(len(scores) - 1):
         sub1, sub2 = scores[i], scores[i + 1]
         t_list = np.array(createTransList(student_id, scores, transition_matrix, sub1, sub2, discounts, discount_factor))
-        # np.array([transition_matrix[int(sub1[i])][int(sub2[i])] for i in range(len(sub1))])
         totalScore += sum(t_list)
-        # if student_id == 'ebd0a6afe46d7ee3d01321e89e7b8950':
-        #     print(t_list)
         final_list += t_list
 
     learned_items = []
     for i, item in enumerate(list(final_list)):
         if item != 0:
             learned_items.append(i)
-            # learned_items.append((i, item))
-    # if student_id == 'ebd0a6afe46d7ee3d01321e89e7b8950':
-    #     print(totalScore)
-    return totalScore/math.sqrt(len(scores)), learned_items
 
-
+    return totalScore / math.sqrt(len(scores)), learned_items
 
 
 if __name__ == '__main__':
