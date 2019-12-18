@@ -4,7 +4,8 @@ By Tyler Yep, Jesse Doan
 
 # Instructions
 Adding more documentation because, heavens, we have guests!
-Obtain the Code Studio data from Chris Piech (cpiech) and put it in `data/`.
+Step 0: Obtain the Code Studio data from Chris Piech (cpiech) and put it in `data/`.
+
 
 ## Data Exploration
 Jump into generate with `cd generate/`.
@@ -14,6 +15,7 @@ Run `python data_loader.py` to convert the data to json.
 Set `USE_FEEDBACK_NN = False` in explore.py.
 
 Then, run `python explore.py` to examine specific data examples.
+
 
 ## Autograder
 Jump into generate with `cd generate/`.
@@ -26,12 +28,10 @@ Run `python preprocess.py [problem_num] [data_path_here.pkl]` to convert/split t
 
 Run `python train.py [problem_num]` to train the model.
 
+Run `python report_card.py` to get the student's aggregated report card.
+
 Run `python explore.py` to examine specific data examples.
 
-
-<!-- # TODO
-1. Visualizing this data somehow (cluster neighbors). @Peter/Natalie/Andrew
-2. Order by number of submissions? -->
 
 ## Milestones
 - Wrote a grammar for p1-p4.
@@ -60,7 +60,6 @@ Run `python explore.py` to examine specific data examples.
 - Ability Gradient Estimation.
   - Can you backprop student success on next problem to train transition weights for learning?
   - Model that predicts future success (number of submissions on next problem) based on calculated score?
-
 
 
 # Project Info

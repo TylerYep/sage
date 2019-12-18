@@ -15,6 +15,7 @@ from transition import TScores
 
 CURR_PROBLEMS = (1, 2, 3, 4)
 USE_FEEDBACK_NN = True
+USE_REPORT_CARDS = True
 SPACE = " "
 
 
@@ -39,6 +40,10 @@ def read_data(problem):
     with open(f'../data/p{problem}/activities-{problem}.json') as activity_file:
         activity_data = json.load(activity_file, cls=TreeDecoder)
 
+    print(f"Loading count map for Problem {problem}")
+    with open(f'../data/p{problem}/countMap-{problem}.json') as count_file:
+        count_data = json.load(count_file, cls=TreeDecoder)
+
     if USE_FEEDBACK_NN:
         rubric_data = {}
     else:
@@ -46,11 +51,13 @@ def read_data(problem):
         with open(f'generated/uniqueSubs-{problem}.json') as rubric_file:
             rubric_data = json.load(rubric_file)
 
-    with open(f'generated/reportcards.json') as report_file:
-        report_cards = json.load(report_file)
+    report_cards = {}
+    if USE_REPORT_CARDS:
+        with open(f'generated/reportcards.json') as report_file:
+            report_cards = json.load(report_file)
 
     ids = list(activity_data.keys())
-    return source_data, activity_data, ids, rubric_data, report_cards
+    return source_data, activity_data, ids, rubric_data, report_cards, count_data
 
 
 def run_gui():
@@ -58,7 +65,7 @@ def run_gui():
     for num in CURR_PROBLEMS:
         prob_data[num] = read_data(num)
 
-    _, _, ids, _, _ = prob_data[CURR_PROBLEMS[0]]
+    _, _, ids, _, _, _ = prob_data[CURR_PROBLEMS[0]]
     student_id = random.choice(ids)
     state = GUIState(prob_data,
                      student_id=student_id,
@@ -68,7 +75,7 @@ def run_gui():
     while state.action != SPACE:
         os.system('clear')
 
-        source_data, activity_data, ids, rubric_data, report_cards = state.get_problem_data()
+        source_data, activity_data, ids, rubric_data, report_cards, count_data = state.get_problem_data()
 
         print("Student id:", state.student_id)
         if state.student_id not in activity_data:
@@ -82,7 +89,7 @@ def run_gui():
             program_id, timestamp = activity_data[state.student_id][state.curr_index]
             print("Submission:", state.curr_index+1, "out of", num_submissions)
             print("Timestamp:", timestamp)
-            print("Program Rank:", program_id, '\n')
+            print("Program Rank:", program_id, f"(similar programs: {count_data[str(program_id)]})\n")
 
             program_tree = autoFormat(problem)
             if state.simple_mode:
@@ -107,10 +114,10 @@ def run_gui():
                             _, IX_TO_LABEL, _ = get_label_to_ix(state.curr_problem)
                             print(spaces, IX_TO_LABEL[index])
 
-                # print()
-                # tScores = TScores(state, CURR_PROBLEMS)
-                # tScores.get_transition_scores(rubric_data)
                 if state.show_report_card:
+                    # print()
+                    # tScores = TScores(state, CURR_PROBLEMS)
+                    # tScores.get_transition_scores(rubric_data)
                     print("\n\n\n")
                     print("-"*50, "")
                     print("Report Card - Student Summary\n")
@@ -146,24 +153,4 @@ def run_gui():
 if __name__ == '__main__':
     run_gui()
 
-    # Problem 1 interesting:
-    # 1eb24f31bcd0c1be6b6f1f5a90aeec7b
-    # d0cd3baccf1c7185d6674f4b2d041441
-    # e1f895be584bde8e24b5965aeb9f9a85
-    # fd4b849ec5f1202428194a6dfb81875d
-    # f21c0f983d5690b97d8417f0a60fa3ff
-    # 34af15319de837c25bea29fd5b1914fe
-
-    # Problem 2 interesting:
-    # e01d8b54fd8b2559a69f974cc0a85ff7
-    # 70e90d1d1273b4940bb8d0af3faadf72
-    # 919d02f28230e7f543880fdb22845874
-
 # MY FAVORITE P1: dff01204325d3fdaa01f4b4f9d23d713
-'''
-print(f"Loading count map for Problem {problem}")
-with open(f'data/p{problem}/countMap-{problem}.json') as count_file:
-    count_data = json.load(count_file, cls=TreeDecoder)
-
-print("Program Rank:", program_id, f"(similar programs:{count_data[str(program_id)]})")
-'''

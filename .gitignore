@@ -8,8 +8,10 @@ p1_all_attempts.txt
 generate/generated/
 generate/checkpoints/
 generate/data/
+generate/plots/
 !generate/checkpoints/model_best.pth.tar
-.pyre/
+.pyre
+.vscode
 
 # C extensions
 *.so
